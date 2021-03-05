@@ -18,6 +18,11 @@
   url = "files/cv.pdf"
   weight = 30
 
+[[main]]
+  name = "Resume"
+  url = "files/resume.pdf"
+  weight = 40
+
 #[[main]]
 #  name = "Contact"
 #  url = "#contact"
