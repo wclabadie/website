@@ -1,5 +1,5 @@
 ---
-abstract: The switch from TAKS to STAAR changed the way in which Texas schools are evaluated by the Texas Education Agency (TEA), and in so doing, changed the objectives of school administrators in the state. This study explores the way that the change to administrator objectives affected retention practices in Texas public schools, and whether there were any long-term effects to students? future exam scores.
+abstract: The switch from TAKS to STAAR changed the way in which Texas schools are evaluated by the Texas Education Agency (TEA), and in so doing, changed the objectives of school administrators in the state. This study explores the way that the change to administrator objectives affected retention practices in Texas public schools, and whether there were any long-term effects to students' future exam scores.
 authors:
 - admin
 date: "2020"
