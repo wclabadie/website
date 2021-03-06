@@ -1,6 +1,6 @@
 ---
 # Display name
-title: Will Labadie
+title: William Labadie
 
 # Is this the primary user of the site?
 superuser: true
