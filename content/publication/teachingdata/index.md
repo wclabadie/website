@@ -1,8 +1,8 @@
 ---
-#abstract: 	
+abstract: This document summarizes data from the teaching evaluations I've received. 
 authors:
 - admin
-date: "2021"
+#date: ""
 doi: ""
 featured: false
 #image:
@@ -20,7 +20,7 @@ publication_types:
 #  ac convallis placerat. Proin tincidunt magna sed ex #sollicitudin condimentum.
 #tags:
 #- Source Themes
-title: Statement of teaching philosophy
+title: Evidence of teaching effectiveness
 url_code: ""
 url_dataset: ""
 url_pdf: ""
