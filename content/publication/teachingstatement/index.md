@@ -1,5 +1,5 @@
 ---
-#abstract: 	
+abstract: 	This document describes my teaching philosophy, discusses my experiences teaching, and provides some evidence of my effectiveness as an instructor.
 authors:
 - admin
 date: "2021"
