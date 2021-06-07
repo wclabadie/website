@@ -69,4 +69,4 @@ user_groups:
 - Visitors
 ---
 
-Welcome to my web site. I am a 6th-year Economics Ph.D. candidate at the University of Houston. I study public economics and the decision-making of institutions, especially public schools.
+Welcome to my web site. I study public economics and the economics of education, and am especially interested in the decision-making processes in public schools.
