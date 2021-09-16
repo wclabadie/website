@@ -69,4 +69,4 @@ user_groups:
 - Visitors
 ---
 
-Welcome to my web site. I study public economics and the economics of education, and am especially interested in the decision-making processes in public schools.
+Welcome to my web site. I am a visiting assistant professor of economics at Earlham College, where I teach courses in intermediate microeconomics, game theory, economic development, and econometrics. I study public economics and the economics of education; I am especially interested in the decision-making processes of public schools.
