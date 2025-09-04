@@ -1,0 +1,319 @@
+---
+title: "Time series graphics"
+author: "BUS 323 Forecasting and Risk Analysis"
+format: revealjs
+editor: visual
+---
+
+## The pipe operator
+
+-   The pipe operator (`%>%`, or `|>`) allows you to write your code in a more stepwise fashion.
+-   Instead of:
+
+```         
+mutate(filter(data, x > 5), 
+y = y * 2)
+```
+
+-   You can write:
+
+```         
+data %>%
+  filter(x > 5) %>%
+  mutate(y = y * 2)
+```
+
+## Data manipulation functions: filter
+
+-   `filter()`: selects rows based on conditions.
+-   e.g.
+
+```         
+data |> filter(x > 5)
+```
+
+will return the observations within object `data` that match the filter condition.
+
+## Data manipulation functions: mutate
+
+-   `mutate()`: adds or transforms columns.
+-   e.g.
+
+```         
+data |> mutate(y = y*2)
+```
+
+will return `data` with the observations in column `y` doubled.
+
+## Data manipulation functions: select
+
+-   `select()`: chooses specific columns.
+-   e.g.
+
+```         
+data |> select(x)
+```
+
+will return only the `x` column of `data`.
+
+## Data manipulation functions: arrange
+
+-   `arrange()`: sorts rows by column values.
+-   e.g.
+
+```         
+data |> arrange(desc(x))
+```
+
+will return `data` with rows sorted by `x` in descending order.
+
+## Data manipulation functions: summarise and group_by
+
+-   `summarise()`: aggregates data
+-   `group_by()`: groups data by a column value
+-   e.g.
+
+```         
+data |> 
+group_by(x) |> 
+summarise(average_y = mean(y))
+```
+
+will return the mean of `y` conditional on `x`.
+
+## Time series graphics in R
+
+-   Load up RStudio
+-   Packages tab -\> Install -\> fpp3
+    -   Check "install dependencies"
+-   Load the fpp3 package by running `library(fpp3)` in your session.
+
+## tsibble objects
+
+-   tsibble objects format time series in a tidy way.
+-   Suppose we have the following:
+
+```{r}
+library(fpp3)
+library(knitr)
+table <- data.frame(
+  Year = c(2015, 2016, 2017, 2018, 2019),
+  Observation = c(123, 39, 78, 52, 110)
+)
+kable(table)
+```
+
+## tsibble objects
+
+-   We can turn it into a tsibble object with the following command:
+
+```         
+y <- tsibble(
+  Year = 2015:2019,
+  Observation = c(123, 39, 78, 52, 110),
+  index = Year
+)
+```
+
+```{r}
+y <- tsibble(
+  Year = 2015:2019,
+  Observation = c(123, 39, 78, 52, 110),
+  index = Year
+)
+```
+
+## Working with tsibble objects
+
+-   Once you have a tsibble, working with it is simple. Run: `PBS`
+
+```{r}
+PBS
+```
+
+## Working with tsibble objects
+
+-   Suppose we are interested in A10 scripts specifically:
+
+```         
+PBS |>
+  filter(ATC2 == "A10")
+```
+
+```{r}
+PBS |>
+  filter(ATC2 == "A10")
+```
+
+## Working with tsibble objects
+
+-   And suppose we only want to use the variables Month, Concession, Type, and Cost:
+
+```         
+PBS |>
+  filter(ATC2 == "A10") |>
+  select(Month, Concession, Type, Cost)
+```
+
+```{r}
+PBS |>
+  filter(ATC2 == "A10") |>
+  select(Month, Concession, Type, Cost)
+```
+
+## Working with tsibble objects
+
+-   Suppose further we are only interested in total cost regardless of concession or type:
+
+```         
+PBS |>
+  filter(ATC2 == "A10") |>
+  select(Month, Concession, Type, Cost) |>
+  summarise(TotalC = sum(Cost))
+```
+
+```{r}
+PBS |>
+  filter(ATC2 == "A10") |>
+  select(Month, Concession, Type, Cost) |>
+  summarise(TotalC = sum(Cost))
+```
+
+## Working with tsibble objects
+
+-   You can make new variables using `mutate()`. Let's convert `TotalC` to millions of dollars:
+
+```         
+PBS |>
+  filter(ATC2 == "A10") |>
+  select(Month, Concession, Type, Cost) |>
+  summarise(TotalC = sum(Cost)) |>
+  mutate(Cost = TotalC/1e6)
+```
+
+```{r}
+PBS |>
+  filter(ATC2 == "A10") |>
+  select(Month, Concession, Type, Cost) |>
+  summarise(TotalC = sum(Cost)) |>
+  mutate(Cost = TotalC/1e6)
+```
+
+## Working with tsibble objects
+
+-   To save something for future use, use the assignment operator `<-`:
+
+```         
+a10 <- PBS |>
+  filter(ATC2 == "A10") |>
+  select(Month, Concession, Type, Cost) |>
+  summarise(TotalC = sum(Cost)) |>
+  mutate(Cost = TotalC/1e6)
+```
+
+```{r}
+a10 <- PBS |>
+  filter(ATC2 == "A10") |>
+  select(Month, Concession, Type, Cost) |>
+  summarise(TotalC = sum(Cost)) |>
+  mutate(Cost = TotalC/1e6)
+```
+
+## Time plots
+
+-   Plot thousands of economy passengers flying between Melbourne (MEL) and Sydney (SYD) airports from the `ansett` dataset in `fpp3` using the `autoplot()` command:
+
+## Time plots
+
+-   Plot thousands of economy passengers flying between Melbourne (MEL) and Sydney (SYD) airports from the `ansett` dataset in `fpp3` using the `autoplot()` command:
+
+```         
+melsyd_economy <- ansett |>
+  filter(Airports == "MEL-SYD", Class == "Economy") |>
+  mutate(Passengers = Passengers/1000)
+autoplot(melsyd_economy, Passengers) +
+  labs(title = "Ansett airlines economy class",
+       subtitle = "Melbourne-Sydney",
+       y = "Passengers ('000)")
+```
+
+## Time plots
+
+-   Plot thousands of economy passengers flying between Melbourne (MEL) and Sydney (SYD) airports from the `ansett` dataset in `fpp3` using the `autoplot()` command:
+
+```{r}
+melsyd_economy <- ansett |>
+  filter(Airports == "MEL-SYD", Class == "Economy") |>
+  mutate(Passengers = Passengers/1000)
+autoplot(melsyd_economy, Passengers) +
+  labs(title = "Ansett airlines economy class",
+       subtitle = "Melbourne-Sydney",
+       y = "Passengers ('000)")
+```
+
+## Time series patterns
+
+-   Cyclicality: occurs when the data exhibit rises and falls of regular but not fixed frequency. If a fluctuation occurs with a fixed frequency and is related to the calendar, it's seasonal.
+-   Exercise time
+
+## Exercise: electricity
+
+```         
+aus_production |>
+  filter(year(Quarter) >= 1980) |>
+  autoplot(Electricity) +
+  labs(y = "GWh", title = "Australian electricity production")
+```
+
+```{r elec}
+aus_production |>
+  filter(year(Quarter) >= 1980) |>
+  autoplot(Electricity) +
+  labs(y = "GWh", title = "Australian electricity production")
+```
+
+## Exercise: bricks
+
+```         
+aus_production |>
+  autoplot(Bricks) +
+  labs(y = "million units", title = "Australian clay brick production")
+```
+
+```{r bricks}
+aus_production |>
+  autoplot(Bricks) +
+  labs(y = "million units", title = "Australian clay brick production")
+```
+
+## Exercise: retail employment
+
+```         
+us_employment |>
+  filter(Title == "Retail Trade", year(Month) >= 1980) |>
+  autoplot(Employed / 1000) +
+  labs(y = "Million people", title = "Retail employment, USA")
+```
+
+```{r retail}
+us_employment |>
+  filter(Title == "Retail Trade", year(Month) >= 1980) |>
+  autoplot(Employed / 1000) +
+  labs(y = "Million people", title = "Retail employment, USA")
+```
+
+## Exercise: AMZN
+
+```         
+gafa_stock |>
+  filter(Symbol == "AMZN", year(Date) >= 2018) |>
+  autoplot(Close) +
+  labs(y = "USD", title = "AMZN closing price")
+```
+
+```{r amzn}
+gafa_stock |>
+  filter(Symbol == "AMZN", year(Date) >= 2018) |>
+  autoplot(Close) +
+  labs(y = "USD", title = "AMZN closing price")
+```

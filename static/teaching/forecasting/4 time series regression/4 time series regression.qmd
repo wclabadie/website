@@ -1,0 +1,230 @@
+---
+title: "Time series regression in R"
+author: "BUS 323 Forecasting and Risk Analysis"
+format: revealjs
+editor: visual
+---
+
+## Getting set up
+
+-   We'll work with the `us_change` dataset today.
+
+```         
+head(us_change)
+```
+
+```{r}
+library(fpp3)
+head(us_change)
+```
+
+## Plotting multiple series on a time plot
+
+-   `autoplot` plots a single series across time.
+-   We want to plot consumption and income change on one plot.
+-   To plot two, we'll have to transform the data such that both series correspond to one variable. We can use `pivot_longer()` to do so.
+
+```         
+us_change |>
+  pivot_longer(c(Consumption, Income), names_to="Series")
+```
+
+## Plotting multiple series on a time plot
+
+-   Great, now we can autoplot `value`
+
+```         
+us_change |>
+  pivot_longer(c(Consumption, Income), names_to="Series") |>
+    autoplot(value) +
+      labs(y = "% change")
+```
+
+```{r}
+us_change |>
+  pivot_longer(c(Consumption, Income), names_to="Series") |>
+    autoplot(value) +
+      labs(y = "% change")
+```
+
+## Plotting a line of best fit
+
+-   Adding a regression line to a scatterplot is simple with `geom_smooth` and the `method = "lm"` option:
+
+```         
+us_change |>
+  ggplot(aes(x = Income, y = Consumption)) +
+  labs(y = "Consumption (quarterly % change)",
+        x = "Income (quarterly % change)") +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+## Plotting a line of best fit
+
+```{r}
+us_change |>
+  ggplot(aes(x = Income, y = Consumption)) +
+  labs(y = "Consumption (quarterly % change)",
+        x = "Income (quarterly % change)") +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+## Estimating a regression function
+
+-   Suppose we want to estimate the following regression fucntion: $y_{t} = \beta_{0} + \beta_{1} x_{t} + \epsilon_{t}$.
+-   Use `TSLM()` to do so:
+
+```         
+us_change |>
+  model(TSLM(Consumption ~ Income)) |>
+  report()
+```
+
+-   Use `TSLM()` instead of `lm()` because it has time series-friendly options built in.
+
+## Regression results
+
+```{r}
+us_change |>
+  model(TSLM(Consumption ~ Income)) |>
+  report()
+```
+
+## Multiple linear regression
+- Regression with more than one regressor is called **multiple regression**:
+$y_{t} = \beta_{0} + \beta_{1} x_{1,t} + \beta_{2} x_{2,t} + ... + \beta_{k} x_{k,t} + \epsilon_{t}$
+- Coefficients reflect conditional marginal effects
+
+## Multiple regression
+- Pick a few variables in ```us_change``` to include in a multiple regression against ```Consumption```.
+
+## Consumption/production
+```{r}
+cor <- cor(us_change$Consumption, us_change$Production)
+
+us_change |>
+  ggplot(aes(x = Production, y = Consumption)) +
+  labs(y = "Consumption (quarterly % change)",
+        x = "Production (quarterly % change)") +
+  geom_point() +
+  annotate("text",
+           x=2.5,y=-1.5,
+           label = paste("r =", round(cor,2)))
+```
+
+## Consumption/savings
+```{r}
+cor <- cor(us_change$Consumption, us_change$Savings)
+
+us_change |>
+  ggplot(aes(x = Savings, y = Consumption)) +
+  labs(y = "Consumption (quarterly % change)",
+        x = "Savings (quarterly % change)") +
+  geom_point() +
+  annotate("text",
+           x=30,y=-2,
+           label = paste("r =", round(cor,2)))
+```
+
+## Consumption/unemployment
+```{r}
+cor <- cor(us_change$Consumption, us_change$Unemployment)
+
+us_change |>
+  ggplot(aes(x = Unemployment, y = Consumption)) +
+  labs(y = "Consumption (quarterly % change)",
+        x = "Unemployment (quarterly % change)") +
+  geom_point() +
+  annotate("text",
+           x=1,y=-2,
+           label = paste("r =", round(cor,2)))
+```
+
+## Multiple regression model
+```
+mr_c <- us_change |>
+  model(TSLM(Consumption ~ Income + Production + Unemployment))
+report(mr_c)
+```
+
+## Multiple regression results
+```{r}
+mr_c <- us_change |>
+  model(TSLM(Consumption ~ Income + Production + Unemployment))
+report(mr_c)
+```
+
+## Fitted values
+- Estimating the regression allows us to obtain fitted (predicted) values for $y$:
+$\hat{y}_{t} = \hat{\beta}_{0} + \hat{\beta}_{1} x_{1,t} + \hat{\beta}_{2} x_{2,t} + ... + \hat{\beta}_{k} x_{k,t} + \epsilon_{t}$
+- Note these are predictions for the actual observed values, not forecasts.
+
+## Accessing fitted values
+- With a ```tslm``` object, use ```augment()``` to access fitted values:
+```
+augment(mr_c)
+```
+```{r}
+augment(mr_c)
+```
+
+## Plotting fitted values
+- Let's see how well our predicted values line up with reality.
+```
+augment(mr_c) |>
+  ggplot(aes(x = Quarter)) +
+  geom_line(aes(y = Consumption, colour = "Data")) +
+  geom_line(aes(y = .fitted, colour = "Fitted")) +
+  labs(y = NULL,
+  title = "Percent change in consumption expenditure") +
+  scale_colour_manual(values=c(Data="black",Fitted="red")) +
+  guides(colour = guide_legend(title = NULL))
+```
+
+## Plotting fitted values
+```{r}
+augment(mr_c) |>
+  ggplot(aes(x = Quarter)) +
+  geom_line(aes(y = Consumption, colour = "Data")) +
+  geom_line(aes(y = .fitted, colour = "Fitted")) +
+  labs(y = NULL,
+  title = "Percent change in consumption expenditure") +
+  scale_colour_manual(values=c(Data="black",Fitted="red")) +
+  guides(colour = guide_legend(title = NULL))
+```
+
+## Plotting fitted values: scatter
+- We could scatter $y$ against $\hat{y}$:
+```
+augment(mr_c) |>
+  ggplot(aes(x = Consumption, y = .fitted)) +
+  geom_point() +
+  labs(x = "Data",
+  y = "Fitted values",
+  title = "% change in consumption expenditure") +
+  geom_abline(intercept = 0, slope = 1)
+```
+
+## Plotting fitted values: scatter
+```{r}
+augment(mr_c) |>
+  ggplot(aes(x = Consumption, y = .fitted)) +
+  geom_point() +
+  labs(x = "Data",
+  y = "Fitted values",
+  title = "% change in consumption expenditure") +
+  geom_abline(intercept = 0, slope = 1)
+```
+
+## Goodness-of-fit
+- The coefficient of determination, $R^{2}$ is a good summary measure of how well your model fits the data:
+
+$R^{2} = \frac{\sum(\hat{y}_{t} - \bar{y})^{2}}{\sum(y_{t} - \bar{y})^{2}}$
+
+- It gives the proportion of variation in $y$ explained by $\hat{y}$.
+- Note $R^{2}$ never decreases when adding predictors. Not necessarily a good metric for evaluating a forecast model. 
+- $R^{2}$ of above model is 0.3755.
+
+## 

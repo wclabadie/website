@@ -461,6 +461,9 @@ F-statistic: 33.84 on 1 and 196 DF, p-value: 2.4022e-08</code></pre>
 <pre><code>mr_c &lt;- us_change |&gt;
   model(TSLM(Consumption ~ Income + Production + Unemployment))
 report(mr_c)</code></pre>
+</section>
+<section id="multiple-regression-results" class="slide level2">
+<h2>Multiple regression results</h2>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>Series: Consumption 
@@ -484,6 +487,89 @@ Multiple R-squared: 0.3755, Adjusted R-squared: 0.3658
 F-statistic: 38.88 on 3 and 194 DF, p-value: &lt; 2.22e-16</code></pre>
 </div>
 </div>
+</section>
+<section id="fitted-values" class="slide level2">
+<h2>Fitted values</h2>
+<ul>
+<li>Estimating the regression allows us to obtain fitted (predicted) values for <span class="math inline">\(y\)</span>: <span class="math inline">\(\hat{y}_{t} = \hat{\beta}_{0} + \hat{\beta}_{1} x_{1,t} + \hat{\beta}_{2} x_{2,t} + ... + \hat{\beta}_{k} x_{k,t} + \epsilon_{t}\)</span></li>
+<li>Note these are predictions for the actual observed values, not forecasts.</li>
+</ul>
+</section>
+<section id="accessing-fitted-values" class="slide level2">
+<h2>Accessing fitted values</h2>
+<ul>
+<li>With a <code>tslm</code> object, use <code>augment()</code> to access fitted values:</li>
+</ul>
+<pre><code>augment(mr_c)</code></pre>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tsibble: 198 x 6 [1Q]
+# Key:       .model [1]
+   .model                            Quarter Consumption .fitted  .resid  .innov
+   &lt;chr&gt;                               &lt;qtr&gt;       &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+ 1 TSLM(Consumption ~ Income + Prod… 1970 Q1       0.619  0.0562  0.562   0.562 
+ 2 TSLM(Consumption ~ Income + Prod… 1970 Q2       0.452  0.479  -0.0274 -0.0274
+ 3 TSLM(Consumption ~ Income + Prod… 1970 Q3       0.873  0.564   0.309   0.309 
+ 4 TSLM(Consumption ~ Income + Prod… 1970 Q4      -0.272 -0.0502 -0.222  -0.222 
+ 5 TSLM(Consumption ~ Income + Prod… 1971 Q1       1.90   1.16    0.741   0.741 
+ 6 TSLM(Consumption ~ Income + Prod… 1971 Q2       0.915  0.962  -0.0470 -0.0470
+ 7 TSLM(Consumption ~ Income + Prod… 1971 Q3       0.794  0.636   0.158   0.158 
+ 8 TSLM(Consumption ~ Income + Prod… 1971 Q4       1.65   1.00    0.642   0.642 
+ 9 TSLM(Consumption ~ Income + Prod… 1972 Q1       1.31   1.17    0.146   0.146 
+10 TSLM(Consumption ~ Income + Prod… 1972 Q2       1.89   0.988   0.897   0.897 
+# ℹ 188 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="plotting-fitted-values" class="slide level2">
+<h2>Plotting fitted values</h2>
+<ul>
+<li>Let’s see how well our predicted values line up with reality.</li>
+</ul>
+<pre><code>augment(mr_c) |&gt;
+  ggplot(aes(x = Quarter)) +
+  geom_line(aes(y = Consumption, colour = "Data")) +
+  geom_line(aes(y = .fitted, colour = "Fitted")) +
+  labs(y = NULL,
+  title = "Percent change in consumption expenditure") +
+  scale_colour_manual(values=c(Data="black",Fitted="red")) +
+  guides(colour = guide_legend(title = NULL))</code></pre>
+</section>
+<section id="plotting-fitted-values-1" class="slide level2">
+<h2>Plotting fitted values</h2>
+
+<img data-src="4-time-series-regression_files/figure-revealjs/unnamed-chunk-10-1.png" width="960" class="r-stretch"></section>
+<section id="plotting-fitted-values-scatter" class="slide level2">
+<h2>Plotting fitted values: scatter</h2>
+<ul>
+<li>We could scatter <span class="math inline">\(y\)</span> against <span class="math inline">\(\hat{y}\)</span>:</li>
+</ul>
+<pre><code>augment(mr_c) |&gt;
+  ggplot(aes(x = Consumption, y = .fitted)) +
+  geom_point() +
+  labs(x = "Data",
+  y = "Fitted values",
+  title = "% change in consumption expenditure") +
+  geom_abline(intercept = 0, slope = 1)</code></pre>
+</section>
+<section id="plotting-fitted-values-scatter-1" class="slide level2">
+<h2>Plotting fitted values: scatter</h2>
+
+<img data-src="4-time-series-regression_files/figure-revealjs/unnamed-chunk-11-1.png" width="960" class="r-stretch"></section>
+<section id="goodness-of-fit" class="slide level2">
+<h2>Goodness-of-fit</h2>
+<ul>
+<li>The coefficient of determination, <span class="math inline">\(R^{2}\)</span> is a good summary measure of how well your model fits the data:</li>
+</ul>
+<p><span class="math inline">\(R^{2} = \frac{\sum(\hat{y}_{t} - \bar{y})^{2}}{\sum(y_{t} - \bar{y})^{2}}\)</span></p>
+<ul>
+<li>It gives the proportion of variation in <span class="math inline">\(y\)</span> explained by <span class="math inline">\(\hat{y}\)</span>.</li>
+<li>Note <span class="math inline">\(R^{2}\)</span> never decreases when adding predictors. Not necessarily a good metric for evaluating a forecast model.</li>
+<li><span class="math inline">\(R^{2}\)</span> of above model is 0.3755.</li>
+</ul>
+</section>
+<section id="section" class="slide level2">
+<h2></h2>
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">
 
