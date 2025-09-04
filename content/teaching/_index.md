@@ -1,4 +1,4 @@
-# teaching/forecasting/_index.md
+# teaching/_index.md
 
 ---
 title: "Teaching"
