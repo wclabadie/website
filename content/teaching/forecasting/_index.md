@@ -1,5 +1,3 @@
-# teaching/forecasting/_index.md
-
 ---
 title: "BUS 323 Forecasting and Risk Analysis"
 date: Fall 2025

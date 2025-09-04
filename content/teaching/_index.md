@@ -1,5 +1,3 @@
-# teaching/_index.md
-
 ---
 title: "Teaching"
 type: "course"
