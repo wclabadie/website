@@ -1,0 +1,35 @@
+---
+title: "Time series regression primitives"
+author: "Will Labadie"
+format: revealjs
+editor: visual
+---
+
+## Two related series
+
+```{r cons inc}
+library(fpp3)
+
+us_change |>
+  pivot_longer(c(Consumption, Income), names_to="Series") |>
+  autoplot(value) +
+  labs(y = "% change")
+```
+
+## Scatter + line of best fit
+
+```{r lobf}
+us_change |>
+  ggplot(aes(x = Income, y = Consumption)) +
+  labs(y = "Consumption (quarterly % change)",
+       x = "Income (quarterly % change)") +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+## Autocorrelation
+
+```{r auto}
+us_change |>
+  autoplot(Income)
+```
