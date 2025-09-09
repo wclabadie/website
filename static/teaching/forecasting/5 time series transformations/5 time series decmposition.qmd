@@ -1,0 +1,206 @@
+---
+title: "Transformations"
+author: "BUS 323 Forecasting and Risk Analysis"
+format: revealjs
+editor: visual
+---
+
+## Three components for decomposition
+
+1.  Trend-cycle component
+2.  Seasonal component
+3.  Remainder component
+
+## Why decompose?
+
+-   Improve understanding
+-   Improve forecast accuracy
+-   Often, need to transform the series first
+
+## Calendar adjustments
+
+-   Some variation due to calendar effects. We may want to remove that variation to make the patterns more predictable.
+-   e.g. Some months have 30 days, some have 31. Some have 28. Some have 29!
+    -   If we computed total sales per month, some months would have "bonus" days, making them look more productive.
+    -   One possible adjustment: average sales per day.
+
+## Population adjustments
+
+-   Some data series are affected by population changes.We can alter them to give per-capita data.
+-   e.g. GDP. What would GDP per capita reflect that GDP on its own does not?
+
+## Population adjustments
+
+-   Some data series are affected by population changes.We can alter them to give per-capita data.
+-   e.g. GDP. What would GDP per capita reflect that GDP on its own does not?
+-   Use `global_economy` to make a time plot of US GDP and US per-capita GDP.
+
+## Population adjustments
+
+-   Some data series are affected by population changes.We can alter them to give per-capita data.
+-   e.g. GDP. What would GDP per capita reflect that GDP on its own does not?
+-   Use `global_economy` to make a time plot of Australia GDP and per-capita GDP.
+
+## Population adjustments: GDP time plot
+```         
+library(fpp3)
+global_economy |>
+  filter(Country == "Australia") |>
+  autoplot(GDP) +
+  labs(title = "GDP", y = "$")
+```
+
+## Population adjustments: GDP time plot
+```{r}
+library(fpp3)
+global_economy |>
+  filter(Country == "Australia") |>
+  autoplot(GDP) +
+  labs(title = "GDP", y = "$")
+```
+
+## Population adjustments: GDP per capita time plot
+```         
+library(fpp3)
+global_economy |>
+  filter(Country == "Australia") |>
+  autoplot(GDP/Population) +
+  labs(title = "GDP per capita", y = "$")
+```
+
+## Population adjustments: GDP per capita time plot
+```{r}
+library(fpp3)
+global_economy |>
+  filter(Country == "Australia") |>
+  autoplot(GDP/Population) +
+  labs(title = "GDP per capita", y = "$")
+```
+
+## Inflation adjustments
+- Data which are affected by the value of money should be adjusted before modeling. 
+  - e.g. a \$0.99 Arizona Iced Tea today is not the same as a \$0.99 Arizona Iced Tea in 2010.
+
+## Inflation adjustments
+- To adjust, use a price index. 
+  - Let $z_{t}$ represent the price index in year $t$ and $y_{t}$ represent the price of Arizona Iced Tea in year $t$.
+  - Then the price of Arizona Iced Tea in 2000 dollars would be:
+  $x_{t} = \frac{y_{t}}{z_{t}} \times z_{2000}$
+- The Consumer Price Index (CPI) is commonly used for this. The CPI is equal to 100 in the base year.
+
+## Inflation adjustments: Australia retail
+- The ```aus_retail``` dataset gives retail turnover in \$Million AUD. Let's inflation-adjust that series.
+- In particular, let's inflation-adjust *total* retail turnover across states *by year* for *a certain industry*. I'll look "Newspaper and book retailing". Use whatever industry you like. The first step is to get total retail turnover by year for that industry:
+```
+print_retail <- aus_retail |>
+  filter(Industry == "Newspaper and book retailing") |>
+    group_by(Industry) |>
+      index_by(Year = year(Month)) |>
+        summarise(Turnover = sum(Turnover))
+```
+```{r}
+print_retail <- aus_retail |>
+  filter(Industry == "Newspaper and book retailing") |>
+    group_by(Industry) |>
+      index_by(Year = year(Month)) |>
+        summarise(Turnover = sum(Turnover))
+```
+
+## Inflation adjustments: Australia retail
+- Next we'll need to get our price index. We can grab the CPI from ```global_economy```:
+```
+aus_economy <- global_economy |>
+  filter(Code == "AUS")
+```
+```{r}
+aus_economy <- global_economy |>
+  filter(Code == "AUS")
+```
+
+## Inflation adjustments: Australia retail
+- Next we'll need to use the CPI from ```aus_economy``` to inflation-adjust the values of ```Turnover``` from ```print_retail```:
+```
+print_retail |>
+  left_join(aus_economy, by = "Year") |>
+    mutate(Adjusted_turnover = (Turnover/CPI)*100)
+```
+```{r}
+print_retail |>
+  left_join(aus_economy, by = "Year") |>
+    mutate(Adjusted_turnover = (Turnover/CPI)*100)
+```
+
+## Inflation adjustments: Australia retail
+- For plotting, we'll need to pivot turnover so that it's indexed by whether it's inflation-adjusted or not
+```
+print_retail |>
+  left_join(aus_economy, by = "Year") |>
+    mutate(Adjusted_turnover = (Turnover/CPI)*100) |>
+      pivot_longer(c(Turnover, Adjusted_turnover), values_to = "Turnover")
+```
+```{r}
+print_retail |>
+  left_join(aus_economy, by = "Year") |>
+    mutate(Adjusted_turnover = (Turnover/CPI)*100) |>
+      pivot_longer(c(Turnover, Adjusted_turnover), values_to = "Turnover")
+```
+
+## Inflation adjustments: Australia retail
+- Then we'll need to factorize the new ```name``` variable so it can be plotted. 
+```
+print_retail |>
+  left_join(aus_economy, by = "Year") |>
+    mutate(Adjusted_turnover = (Turnover/CPI)*100) |>
+      pivot_longer(c(Turnover, Adjusted_turnover), values_to = "Turnover") |>
+        mutate(name = factor(name, levels = c("Turnover", "Adjusted_turnover")))
+```
+```{r}
+print_retail |>
+  left_join(aus_economy, by = "Year") |>
+    mutate(Adjusted_turnover = (Turnover/CPI)*100) |>
+      pivot_longer(c(Turnover, Adjusted_turnover), values_to = "Turnover") |>
+        mutate(name = factor(name, levels = c("Turnover", "Adjusted_turnover")))
+```
+
+## Inflation adjustments: Australia retail
+- Finally, we can plot both time plots in one plot area using the ```facet_grid``` plot type:
+```
+print_retail |>
+  left_join(aus_economy, by = "Year") |>
+    mutate(Adjusted_turnover = (Turnover/CPI)*100) |>
+      pivot_longer(c(Turnover, Adjusted_turnover), values_to = "Turnover") |>
+        mutate(name = factor(name, levels = c("Turnover", "Adjusted_turnover"))) |>
+          ggplot(aes(x = Year, y = Turnover)) +
+          geom_line() +
+          facet_grid(name ~ ., scales = "free_y") +
+          labs(title = "Turnover: Australian print industry", y = "$AUD")
+```
+
+## Inflation adjustments: Australia retail
+```{r}
+print_retail |>
+  left_join(aus_economy, by = "Year") |>
+    mutate(Adjusted_turnover = (Turnover/CPI)*100) |>
+      pivot_longer(c(Turnover, Adjusted_turnover), values_to = "Turnover") |>
+        mutate(name = factor(name, levels = c("Turnover", "Adjusted_turnover"))) |>
+          ggplot(aes(x = Year, y = Turnover)) +
+          geom_line() +
+          facet_grid(name ~ ., scales = "free_y") +
+          labs(title = "Turnover: Australian print industry", y = "$AUD")
+```
+
+## Mathematical transformations
+- Logarithms: $w_{t} = log(y_{t})$.
+  - Changes in a log value are relative changes on the original scale.
+  - e.g. if a $log_{10}$ is used, a 1-unit change on the log scale corresponds to a 10x change on the original scale.
+  - Note if there are any zeroes or negative values in the oriignal variable, a log transformation is impossible.
+  
+## Mathematical transformations
+- Box-Cox transformation:
+$$
+w_{t} = 
+\begin{cases}
+\frac{y^{\lambda} - 1}{\lambda}, & \text{if } \lambda \ne 0 \\
+\log(y), & \text{if } \lambda = 0 
+\end{cases}
+$$
