@@ -204,3 +204,64 @@ w_{t} =
 \log(y), & \text{if } \lambda = 0 
 \end{cases}
 $$
+- This actually allows for negative $y$ if $\lambda > 0$.
+- Box-Cox transformations use a natural logarithm.
+- If $\lambda=1$, $w_{t} = $y_{t}-1$. 
+
+## Mathematical transformations
+- Power transformations: $w_{t} = y_{t}^{p}$
+- Square roots, cube roots, squares, etc.
+
+## Mathematical transformations
+- The goal of a mathematical transformation should be to smooth out the series.
+- In particular, these transformations can really help with series that are non-stationary in variance.
+- So in the case of a Box-Cox transformation, $\lambda$ should be chosen to make the size of the seasonal variation relatively constant across the whole series.
+
+## Mathematical transformations: Australian gas production
+- Recall the time series of Australian gas production showed seasonality:
+```
+aus_production |>
+  autoplot(Gas)
+```
+```{r}
+aus_production |>
+  autoplot(Gas)
+```
+
+## Mathematical transformations: Australian gas production
+- Note that the variance of the seasonal trend is increasing over time. 
+- Try to smooth it out with a Box-Cox transformation. You can use ```autoplot(box_cox(Gas, lambda))``` to do it automatically if you supply a ```lambda``` value.
+```{r}
+aus_production |>
+  autoplot(Gas)
+```
+
+## Australian gas production: lambda = 0
+```
+aus_production |>
+  autoplot(box_cox(Gas, 0))
+```
+```{r}
+aus_production |>
+  autoplot(box_cox(Gas, 0))
+```
+
+## Australian gas production: lambda = 1
+```
+aus_production |>
+  autoplot(box_cox(Gas, 1))
+```
+```{r}
+aus_production |>
+  autoplot(box_cox(Gas, 1))
+```
+
+## Australian gas production: lambda = 0.1
+```
+aus_production |>
+  autoplot(box_cox(Gas, 0.1))
+```
+```{r}
+aus_production |>
+  autoplot(box_cox(Gas, 0.1))
+```

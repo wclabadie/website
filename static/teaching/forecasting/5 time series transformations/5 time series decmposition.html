@@ -585,8 +585,61 @@ w_{t} =
 \log(y), &amp; \text{if } \lambda = 0
 \end{cases}
 \]</span></li>
+<li>This actually allows for negative <span class="math inline">\(y\)</span> if <span class="math inline">\(\lambda &gt; 0\)</span>.</li>
+<li>Box-Cox transformations use a natural logarithm.</li>
+<li>If <span class="math inline">\(\lambda=1\)</span>, $w_{t} = <span class="math inline">\(y_{t}-1\)</span>.</li>
 </ul>
-<div class="footer footer-default">
+</section>
+<section id="mathematical-transformations-2" class="slide level2">
+<h2>Mathematical transformations</h2>
+<ul>
+<li>Power transformations: <span class="math inline">\(w_{t} = y_{t}^{p}\)</span></li>
+<li>Square roots, cube roots, squares, etc.</li>
+</ul>
+</section>
+<section id="mathematical-transformations-3" class="slide level2">
+<h2>Mathematical transformations</h2>
+<ul>
+<li>The goal of a mathematical transformation should be to smooth out the series.</li>
+<li>In particular, these transformations can really help with series that are non-stationary in variance.</li>
+<li>So in the case of a Box-Cox transformation, <span class="math inline">\(\lambda\)</span> should be chosen to make the size of the seasonal variation relatively constant across the whole series.</li>
+</ul>
+</section>
+<section id="mathematical-transformations-australian-gas-production" class="slide level2">
+<h2>Mathematical transformations: Australian gas production</h2>
+<ul>
+<li>Recall the time series of Australian gas production showed seasonality:</li>
+</ul>
+<pre><code>aus_production |&gt;
+  autoplot(Gas)</code></pre>
+
+<img data-src="5-time-series-decmposition_files/figure-revealjs/unnamed-chunk-18-1.png" width="960" class="r-stretch"></section>
+<section id="mathematical-transformations-australian-gas-production-1" class="slide level2">
+<h2>Mathematical transformations: Australian gas production</h2>
+<ul>
+<li>Note that the variance of the seasonal trend is increasing over time.</li>
+<li>Try to smooth it out with a Box-Cox transformation. You can use <code>autoplot(box_cox(Gas, lambda))</code> to do it automatically if you supply a <code>lambda</code> value.</li>
+</ul>
+
+<img data-src="5-time-series-decmposition_files/figure-revealjs/unnamed-chunk-20-1.png" width="960" class="r-stretch"></section>
+<section id="australian-gas-production-lambda-0" class="slide level2">
+<h2>Australian gas production: lambda = 0</h2>
+<pre><code>aus_production |&gt;
+  autoplot(box_cox(Gas, 0))</code></pre>
+
+<img data-src="5-time-series-decmposition_files/figure-revealjs/unnamed-chunk-22-1.png" width="960" class="r-stretch"></section>
+<section id="australian-gas-production-lambda-1" class="slide level2">
+<h2>Australian gas production: lambda = 1</h2>
+<pre><code>aus_production |&gt;
+  autoplot(box_cox(Gas, 1))</code></pre>
+
+<img data-src="5-time-series-decmposition_files/figure-revealjs/unnamed-chunk-24-1.png" width="960" class="r-stretch"></section>
+<section id="australian-gas-production-lambda-0.1" class="slide level2">
+<h2>Australian gas production: lambda = 0.1</h2>
+<pre><code>aus_production |&gt;
+  autoplot(box_cox(Gas, 0.1))</code></pre>
+
+<img data-src="5-time-series-decmposition_files/figure-revealjs/unnamed-chunk-26-1.png" width="960" class="r-stretch"><div class="footer footer-default">
 
 </div>
 </section>
