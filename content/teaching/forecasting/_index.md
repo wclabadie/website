@@ -17,3 +17,5 @@ Welcome to the course!
 {{% staticref "teaching/forecasting/4 time series regression/4 time series regression.html" "newtab" %}}Lecture 4: Time series regression{{% /staticref %}}
 
 {{% staticref "teaching/forecasting/5 time series transformations/5 time series decmposition.html" "newtab" %}}Lecture 5: Time series transformations{{% /staticref %}}
+
+{{% staticref "teaching/forecasting/6 regression evaluation/6 regression evaluation.html" "newtab" %}}Lecture 6: Regression evaluation{{% /staticref %}}
