@@ -46,7 +46,7 @@ editor: visual
 -   Here's a time plot of US retail employment we'll decompose.
 
 ```{r}
-#| echo: false
+#| echo: true
 library(fpp3)
 us_retail_employment <- us_employment |>
   filter(year(Month) >= 1990, Title == "Retail Trade") |>
@@ -316,7 +316,7 @@ us_retail_employment_ma |>
 -   Assume constant seasonal component across time.
 
 1.  If $m$ is even, compute $\hat{T_{t}}$ using a $2 \times m$-MA. If $m$ is odd, compute $\hat{T_{t}}$ using a $m$-MA.
-2.  Calculate the detrended series $y_{t} = \hat{T_{t}}$.
+2.  Calculate the detrended series $y_{t} - \hat{T_{t}}$.
 
 ## Classical decomposition
 
@@ -324,7 +324,7 @@ us_retail_employment_ma |>
 -   Assume constant seasonal component across time.
 
 1.  If $m$ is even, compute $\hat{T_{t}}$ using a $2 \times m$-MA. If $m$ is odd, compute $\hat{T_{t}}$ using a $m$-MA.
-2.  Calculate the detrended series $y_{t} = \hat{T_{t}}$.
+2.  Calculate the detrended series $y_{t} - \hat{T_{t}}$.
 3.  Average the within-season detrended values to obtain $\hat{S_{t}}$.
 
 ## Classical decomposition
@@ -333,7 +333,7 @@ us_retail_employment_ma |>
 -   Assume constant seasonal component across time.
 
 1.  If $m$ is even, compute $\hat{T_{t}}$ using a $2 \times m$-MA. If $m$ is odd, compute $\hat{T_{t}}$ using a $m$-MA.
-2.  Calculate the detrended series $y_{t} = \hat{T_{t}}$.
+2.  Calculate the detrended series $y_{t} - \hat{T_{t}}$.
 3.  Average the within-season detrended values to obtain $\hat{S_{t}}$.
 4.  Calculate the remainder component $\hat{R_{t}} = y_{t} - \hat{T_{t}} - \hat{S_{t}}$.
 

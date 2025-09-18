@@ -451,7 +451,16 @@ log(y_{t}) = log(S_{t}) + log(T_{t}) + log(R_{t})
 <li>We’ll talk about decomposition methods soon, but let’s see the benefit first.</li>
 <li>Here’s a time plot of US retail employment we’ll decompose.</li>
 </ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a><span class="fu">library</span>(fpp3)</span>
+<span id="cb1-2"><a href=""></a>us_retail_employment <span class="ot">&lt;-</span> us_employment <span class="sc">|&gt;</span></span>
+<span id="cb1-3"><a href=""></a>  <span class="fu">filter</span>(<span class="fu">year</span>(Month) <span class="sc">&gt;=</span> <span class="dv">1990</span>, Title <span class="sc">==</span> <span class="st">"Retail Trade"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-4"><a href=""></a>  <span class="fu">select</span>(<span class="sc">-</span>Series_ID)</span>
+<span id="cb1-5"><a href=""></a><span class="fu">autoplot</span>(us_retail_employment, Employed) <span class="sc">+</span></span>
+<span id="cb1-6"><a href=""></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Persons (thousands)"</span>,</span>
+<span id="cb1-7"><a href=""></a>       <span class="at">title =</span> <span class="st">"Total employment in US retail"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
+</div>
 <img data-src="7-time-series-decomposition_files/figure-revealjs/unnamed-chunk-1-1.png" width="960" class="r-stretch"></section>
 <section id="example-us-retail-employment-1" class="slide level2">
 <h2>Example: US retail employment</h2>
@@ -554,11 +563,11 @@ log(y_{t}) = log(S_{t}) + log(T_{t}) + log(R_{t})
 <li>Make an autoplot of Australian exports from the <code>global_economy</code> dataset:</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>aus_economy <span class="ot">&lt;-</span> global_economy <span class="sc">|&gt;</span></span>
-<span id="cb1-2"><a href=""></a>  <span class="fu">filter</span>(Country <span class="sc">==</span> <span class="st">"Australia"</span>)</span>
-<span id="cb1-3"><a href=""></a>aus_economy <span class="sc">|&gt;</span></span>
-<span id="cb1-4"><a href=""></a>  <span class="fu">autoplot</span>(Exports) <span class="sc">+</span></span>
-<span id="cb1-5"><a href=""></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"% of GDP"</span>, <span class="at">title =</span> <span class="st">"Total Australian exports"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a>aus_economy <span class="ot">&lt;-</span> global_economy <span class="sc">|&gt;</span></span>
+<span id="cb2-2"><a href=""></a>  <span class="fu">filter</span>(Country <span class="sc">==</span> <span class="st">"Australia"</span>)</span>
+<span id="cb2-3"><a href=""></a>aus_economy <span class="sc">|&gt;</span></span>
+<span id="cb2-4"><a href=""></a>  <span class="fu">autoplot</span>(Exports) <span class="sc">+</span></span>
+<span id="cb2-5"><a href=""></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"% of GDP"</span>, <span class="at">title =</span> <span class="st">"Total Australian exports"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
 <img data-src="7-time-series-decomposition_files/figure-revealjs/unnamed-chunk-5-1.png" width="960" class="r-stretch"></section>
@@ -568,8 +577,8 @@ log(y_{t}) = log(S_{t}) + log(T_{t}) + log(R_{t})
 <li>We can execute a 5-MA transformation manually with an iterative loop. First, we’ll define the parameters:</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a>k <span class="ot">&lt;-</span> <span class="dv">2</span>  </span>
-<span id="cb2-2"><a href=""></a>m <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> k <span class="sc">+</span> <span class="dv">1</span>  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a>k <span class="ot">&lt;-</span> <span class="dv">2</span>  </span>
+<span id="cb3-2"><a href=""></a>m <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> k <span class="sc">+</span> <span class="dv">1</span>  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="moving-averages-application-2" class="slide level2">
@@ -578,7 +587,7 @@ log(y_{t}) = log(S_{t}) + log(T_{t}) + log(R_{t})
 <li>Next, make a vector we’ll put the 5-MA transformation in:</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a>aus_economy<span class="sc">$</span>ma_5 <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="fu">length</span>(aus_economy<span class="sc">$</span>Exports))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href=""></a>aus_economy<span class="sc">$</span>ma_5 <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="fu">length</span>(aus_economy<span class="sc">$</span>Exports))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="moving-averages-application-3" class="slide level2">
@@ -587,13 +596,13 @@ log(y_{t}) = log(S_{t}) + log(T_{t}) + log(R_{t})
 <li>Finally, we can make a loop to feed the 5-period average of <code>Exports</code> into each observation in <code>ma_5</code>:</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href=""></a><span class="cf">for</span> (i <span class="cf">in</span> (k <span class="sc">+</span> <span class="dv">1</span>)<span class="sc">:</span>(<span class="fu">length</span>(aus_economy<span class="sc">$</span>Exports) <span class="sc">-</span> k)) {</span>
-<span id="cb4-2"><a href=""></a>  aus_economy<span class="sc">$</span>ma_5[i] <span class="ot">&lt;-</span> <span class="fu">mean</span>(aus_economy<span class="sc">$</span>Exports[(i <span class="sc">-</span> k)<span class="sc">:</span>(i <span class="sc">+</span> k)])</span>
-<span id="cb4-3"><a href=""></a>}</span>
-<span id="cb4-4"><a href=""></a></span>
-<span id="cb4-5"><a href=""></a>aus_economy <span class="sc">|&gt;</span></span>
-<span id="cb4-6"><a href=""></a>  <span class="fu">select</span>(Exports, ma_5) <span class="sc">|&gt;</span></span>
-<span id="cb4-7"><a href=""></a>    <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a><span class="cf">for</span> (i <span class="cf">in</span> (k <span class="sc">+</span> <span class="dv">1</span>)<span class="sc">:</span>(<span class="fu">length</span>(aus_economy<span class="sc">$</span>Exports) <span class="sc">-</span> k)) {</span>
+<span id="cb5-2"><a href=""></a>  aus_economy<span class="sc">$</span>ma_5[i] <span class="ot">&lt;-</span> <span class="fu">mean</span>(aus_economy<span class="sc">$</span>Exports[(i <span class="sc">-</span> k)<span class="sc">:</span>(i <span class="sc">+</span> k)])</span>
+<span id="cb5-3"><a href=""></a>}</span>
+<span id="cb5-4"><a href=""></a></span>
+<span id="cb5-5"><a href=""></a>aus_economy <span class="sc">|&gt;</span></span>
+<span id="cb5-6"><a href=""></a>  <span class="fu">select</span>(Exports, ma_5) <span class="sc">|&gt;</span></span>
+<span id="cb5-7"><a href=""></a>    <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tsibble: 6 x 3 [1Y]
   Exports  ma_5  Year
@@ -624,15 +633,15 @@ log(y_{t}) = log(S_{t}) + log(T_{t}) + log(R_{t})
 <li>The function applies a given function (for us, it will be <code>mean</code>) to “sliding” time windows.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a>aus_economy <span class="sc">|&gt;</span></span>
-<span id="cb6-2"><a href=""></a>  <span class="fu">mutate</span>(</span>
-<span id="cb6-3"><a href=""></a>    <span class="at">ma5 =</span> slider<span class="sc">::</span><span class="fu">slide_dbl</span>(Exports, mean,</span>
-<span id="cb6-4"><a href=""></a>                             <span class="at">.before =</span> <span class="dv">2</span>, </span>
-<span id="cb6-5"><a href=""></a>                             <span class="at">.after =</span> <span class="dv">2</span>,</span>
-<span id="cb6-6"><a href=""></a>                             <span class="at">.complete =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb6-7"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb6-8"><a href=""></a>    <span class="fu">select</span>(Exports, ma5) <span class="sc">|&gt;</span></span>
-<span id="cb6-9"><a href=""></a>      <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a>aus_economy <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href=""></a>  <span class="fu">mutate</span>(</span>
+<span id="cb7-3"><a href=""></a>    <span class="at">ma5 =</span> slider<span class="sc">::</span><span class="fu">slide_dbl</span>(Exports, mean,</span>
+<span id="cb7-4"><a href=""></a>                             <span class="at">.before =</span> <span class="dv">2</span>, </span>
+<span id="cb7-5"><a href=""></a>                             <span class="at">.after =</span> <span class="dv">2</span>,</span>
+<span id="cb7-6"><a href=""></a>                             <span class="at">.complete =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-7"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb7-8"><a href=""></a>    <span class="fu">select</span>(Exports, ma5) <span class="sc">|&gt;</span></span>
+<span id="cb7-9"><a href=""></a>      <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tsibble: 6 x 3 [1Y]
   Exports   ma5  Year
@@ -653,11 +662,11 @@ log(y_{t}) = log(S_{t}) + log(T_{t}) + log(R_{t})
 <li>Let’s plot the trend-cycle component estimates from our 5-MA object along with the time plot of exports:</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a>aus_economy <span class="sc">|&gt;</span></span>
-<span id="cb8-2"><a href=""></a>  <span class="fu">autoplot</span>(Exports) <span class="sc">+</span></span>
-<span id="cb8-3"><a href=""></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> ma_5), <span class="at">colour =</span> <span class="st">"orange"</span>) <span class="sc">+</span></span>
-<span id="cb8-4"><a href=""></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"% of GDP"</span>,</span>
-<span id="cb8-5"><a href=""></a>       <span class="at">title =</span> <span class="st">"Total Australian exports"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a>aus_economy <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href=""></a>  <span class="fu">autoplot</span>(Exports) <span class="sc">+</span></span>
+<span id="cb9-3"><a href=""></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> ma_5), <span class="at">colour =</span> <span class="st">"orange"</span>) <span class="sc">+</span></span>
+<span id="cb9-4"><a href=""></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"% of GDP"</span>,</span>
+<span id="cb9-5"><a href=""></a>       <span class="at">title =</span> <span class="st">"Total Australian exports"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
 <img data-src="7-time-series-decomposition_files/figure-revealjs/unnamed-chunk-10-1.png" width="960" class="r-stretch"></section>
@@ -711,18 +720,18 @@ log(y_{t}) = log(S_{t}) + log(T_{t}) + log(R_{t})
 <section id="example-us-retail-employment-8" class="slide level2">
 <h2>Example: US retail employment</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a>us_retail_employment_ma <span class="ot">&lt;-</span> us_retail_employment <span class="sc">|&gt;</span></span>
-<span id="cb9-2"><a href=""></a>  <span class="fu">mutate</span>(</span>
-<span id="cb9-3"><a href=""></a>    <span class="st">`</span><span class="at">12-MA</span><span class="st">`</span> <span class="ot">=</span> slider<span class="sc">::</span><span class="fu">slide_dbl</span>(Employed, mean,</span>
-<span id="cb9-4"><a href=""></a>                <span class="at">.before =</span> <span class="dv">5</span>, <span class="at">.after =</span> <span class="dv">6</span>, <span class="at">.complete =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb9-5"><a href=""></a>    <span class="st">`</span><span class="at">2x12-MA</span><span class="st">`</span> <span class="ot">=</span> slider<span class="sc">::</span><span class="fu">slide_dbl</span>(<span class="st">`</span><span class="at">12-MA</span><span class="st">`</span>, mean,</span>
-<span id="cb9-6"><a href=""></a>                <span class="at">.before =</span> <span class="dv">1</span>, <span class="at">.after =</span> <span class="dv">0</span>, <span class="at">.complete =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb9-7"><a href=""></a>  )</span>
-<span id="cb9-8"><a href=""></a>us_retail_employment_ma <span class="sc">|&gt;</span></span>
-<span id="cb9-9"><a href=""></a>  <span class="fu">autoplot</span>(Employed, <span class="at">colour =</span> <span class="st">"gray"</span>) <span class="sc">+</span></span>
-<span id="cb9-10"><a href=""></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="st">`</span><span class="at">2x12-MA</span><span class="st">`</span>), <span class="at">colour =</span> <span class="st">"#D55E00"</span>) <span class="sc">+</span></span>
-<span id="cb9-11"><a href=""></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Persons (thousands)"</span>,</span>
-<span id="cb9-12"><a href=""></a>       <span class="at">title =</span> <span class="st">"Total employment in US retail"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a>us_retail_employment_ma <span class="ot">&lt;-</span> us_retail_employment <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href=""></a>  <span class="fu">mutate</span>(</span>
+<span id="cb10-3"><a href=""></a>    <span class="st">`</span><span class="at">12-MA</span><span class="st">`</span> <span class="ot">=</span> slider<span class="sc">::</span><span class="fu">slide_dbl</span>(Employed, mean,</span>
+<span id="cb10-4"><a href=""></a>                <span class="at">.before =</span> <span class="dv">5</span>, <span class="at">.after =</span> <span class="dv">6</span>, <span class="at">.complete =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb10-5"><a href=""></a>    <span class="st">`</span><span class="at">2x12-MA</span><span class="st">`</span> <span class="ot">=</span> slider<span class="sc">::</span><span class="fu">slide_dbl</span>(<span class="st">`</span><span class="at">12-MA</span><span class="st">`</span>, mean,</span>
+<span id="cb10-6"><a href=""></a>                <span class="at">.before =</span> <span class="dv">1</span>, <span class="at">.after =</span> <span class="dv">0</span>, <span class="at">.complete =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-7"><a href=""></a>  )</span>
+<span id="cb10-8"><a href=""></a>us_retail_employment_ma <span class="sc">|&gt;</span></span>
+<span id="cb10-9"><a href=""></a>  <span class="fu">autoplot</span>(Employed, <span class="at">colour =</span> <span class="st">"gray"</span>) <span class="sc">+</span></span>
+<span id="cb10-10"><a href=""></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="st">`</span><span class="at">2x12-MA</span><span class="st">`</span>), <span class="at">colour =</span> <span class="st">"#D55E00"</span>) <span class="sc">+</span></span>
+<span id="cb10-11"><a href=""></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Persons (thousands)"</span>,</span>
+<span id="cb10-12"><a href=""></a>       <span class="at">title =</span> <span class="st">"Total employment in US retail"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="example-us-retail-employment-9" class="slide level2">
@@ -754,7 +763,7 @@ log(y_{t}) = log(S_{t}) + log(T_{t}) + log(R_{t})
 </ul>
 <ol type="1">
 <li>If <span class="math inline">\(m\)</span> is even, compute <span class="math inline">\(\hat{T_{t}}\)</span> using a <span class="math inline">\(2 \times m\)</span>-MA. If <span class="math inline">\(m\)</span> is odd, compute <span class="math inline">\(\hat{T_{t}}\)</span> using a <span class="math inline">\(m\)</span>-MA.</li>
-<li>Calculate the detrended series <span class="math inline">\(y_{t} = \hat{T_{t}}\)</span>.</li>
+<li>Calculate the detrended series <span class="math inline">\(y_{t} - \hat{T_{t}}\)</span>.</li>
 </ol>
 </section>
 <section id="classical-decomposition-3" class="slide level2">
@@ -765,7 +774,7 @@ log(y_{t}) = log(S_{t}) + log(T_{t}) + log(R_{t})
 </ul>
 <ol type="1">
 <li>If <span class="math inline">\(m\)</span> is even, compute <span class="math inline">\(\hat{T_{t}}\)</span> using a <span class="math inline">\(2 \times m\)</span>-MA. If <span class="math inline">\(m\)</span> is odd, compute <span class="math inline">\(\hat{T_{t}}\)</span> using a <span class="math inline">\(m\)</span>-MA.</li>
-<li>Calculate the detrended series <span class="math inline">\(y_{t} = \hat{T_{t}}\)</span>.</li>
+<li>Calculate the detrended series <span class="math inline">\(y_{t} - \hat{T_{t}}\)</span>.</li>
 <li>Average the within-season detrended values to obtain <span class="math inline">\(\hat{S_{t}}\)</span>.</li>
 </ol>
 </section>
@@ -777,7 +786,7 @@ log(y_{t}) = log(S_{t}) + log(T_{t}) + log(R_{t})
 </ul>
 <ol type="1">
 <li>If <span class="math inline">\(m\)</span> is even, compute <span class="math inline">\(\hat{T_{t}}\)</span> using a <span class="math inline">\(2 \times m\)</span>-MA. If <span class="math inline">\(m\)</span> is odd, compute <span class="math inline">\(\hat{T_{t}}\)</span> using a <span class="math inline">\(m\)</span>-MA.</li>
-<li>Calculate the detrended series <span class="math inline">\(y_{t} = \hat{T_{t}}\)</span>.</li>
+<li>Calculate the detrended series <span class="math inline">\(y_{t} - \hat{T_{t}}\)</span>.</li>
 <li>Average the within-season detrended values to obtain <span class="math inline">\(\hat{S_{t}}\)</span>.</li>
 <li>Calculate the remainder component <span class="math inline">\(\hat{R_{t}} = y_{t} - \hat{T_{t}} - \hat{S_{t}}\)</span>.</li>
 </ol>
@@ -788,14 +797,14 @@ log(y_{t}) = log(S_{t}) + log(T_{t}) + log(R_{t})
 <li>Luckily there is an R function that does all this for us: <code>classical_decomposition()</code>:</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a>us_retail_employment <span class="sc">|&gt;</span></span>
-<span id="cb10-2"><a href=""></a>  <span class="fu">model</span>(</span>
-<span id="cb10-3"><a href=""></a>    <span class="fu">classical_decomposition</span>(Employed, <span class="at">type =</span> <span class="st">"additive"</span>)</span>
-<span id="cb10-4"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb10-5"><a href=""></a>  <span class="fu">components</span>() <span class="sc">|&gt;</span></span>
-<span id="cb10-6"><a href=""></a>  <span class="fu">autoplot</span>() <span class="sc">+</span></span>
-<span id="cb10-7"><a href=""></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Classical additive decomposition of total</span></span>
-<span id="cb10-8"><a href=""></a><span class="st">                  US retail employment"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a>us_retail_employment <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a href=""></a>  <span class="fu">model</span>(</span>
+<span id="cb11-3"><a href=""></a>    <span class="fu">classical_decomposition</span>(Employed, <span class="at">type =</span> <span class="st">"additive"</span>)</span>
+<span id="cb11-4"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb11-5"><a href=""></a>  <span class="fu">components</span>() <span class="sc">|&gt;</span></span>
+<span id="cb11-6"><a href=""></a>  <span class="fu">autoplot</span>() <span class="sc">+</span></span>
+<span id="cb11-7"><a href=""></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Classical additive decomposition of total</span></span>
+<span id="cb11-8"><a href=""></a><span class="st">                  US retail employment"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="classical-decomposition-example-1" class="slide level2">
@@ -866,12 +875,12 @@ log(y_{t}) = log(S_{t}) + log(T_{t}) + log(R_{t})
 <li>Try out the following:</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a>us_retail_employment <span class="sc">|&gt;</span></span>
-<span id="cb11-2"><a href=""></a>  <span class="fu">model</span>(</span>
-<span id="cb11-3"><a href=""></a>    <span class="fu">STL</span>(Employed)</span>
-<span id="cb11-4"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb11-5"><a href=""></a>    <span class="fu">components</span>() <span class="sc">|&gt;</span></span>
-<span id="cb11-6"><a href=""></a>      <span class="fu">autoplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href=""></a>us_retail_employment <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href=""></a>  <span class="fu">model</span>(</span>
+<span id="cb12-3"><a href=""></a>    <span class="fu">STL</span>(Employed)</span>
+<span id="cb12-4"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb12-5"><a href=""></a>    <span class="fu">components</span>() <span class="sc">|&gt;</span></span>
+<span id="cb12-6"><a href=""></a>      <span class="fu">autoplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="stl-decomposition-example-1" class="slide level2">
@@ -954,13 +963,13 @@ log(y_{t}) = log(S_{t}) + log(T_{t}) + log(R_{t})
 <li>Try the following:</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href=""></a>us_retail_employment <span class="sc">|&gt;</span></span>
-<span id="cb12-2"><a href=""></a>  <span class="fu">model</span>(</span>
-<span id="cb12-3"><a href=""></a>    <span class="fu">STL</span>(Employed <span class="sc">~</span> <span class="fu">trend</span>(<span class="at">window =</span> <span class="dv">7</span>) <span class="sc">+</span></span>
-<span id="cb12-4"><a href=""></a>                   <span class="fu">season</span>(<span class="at">window =</span> <span class="st">"periodic"</span>),</span>
-<span id="cb12-5"><a href=""></a>    <span class="at">robust =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb12-6"><a href=""></a>  <span class="fu">components</span>() <span class="sc">|&gt;</span></span>
-<span id="cb12-7"><a href=""></a>  <span class="fu">autoplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a>us_retail_employment <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href=""></a>  <span class="fu">model</span>(</span>
+<span id="cb13-3"><a href=""></a>    <span class="fu">STL</span>(Employed <span class="sc">~</span> <span class="fu">trend</span>(<span class="at">window =</span> <span class="dv">7</span>) <span class="sc">+</span></span>
+<span id="cb13-4"><a href=""></a>                   <span class="fu">season</span>(<span class="at">window =</span> <span class="st">"periodic"</span>),</span>
+<span id="cb13-5"><a href=""></a>    <span class="at">robust =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb13-6"><a href=""></a>  <span class="fu">components</span>() <span class="sc">|&gt;</span></span>
+<span id="cb13-7"><a href=""></a>  <span class="fu">autoplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="stl-decomposition-example-again-1" class="slide level2">
