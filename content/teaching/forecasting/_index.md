@@ -23,3 +23,5 @@ Welcome to the course!
 {{% staticref "teaching/forecasting/7 time series decomposition/7 time series decomposition.html" "newtab" %}}Lecture 7: Time series decomposition{{% /staticref %}}
 
 {{% staticref "teaching/forecasting/7 time series decomposition/5 decomposition.pdf" "newtab" %}}Lecture 7 exercise{{% /staticref %}}
+
+{{% staticref "teaching/forecasting/7 time series decomposition/Report 1.html" "newtab" %}}Report: forecasting with regression{{% /staticref %}}
