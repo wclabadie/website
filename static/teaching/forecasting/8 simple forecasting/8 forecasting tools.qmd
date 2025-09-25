@@ -1,0 +1,326 @@
+---
+title: "Forecasting tools"
+author: "BUS 323 Forecasting and Risk Analysis"
+format: revealjs
+editor: visual
+---
+
+## Forecasting workflow
+```{r}
+library(fpp3)
+```
+
+1. Tidy
+2. Model-building
+    a. Visualize
+    b. Specify model
+    c. Estimate model
+    d. Evaluate model
+    e. Repeat as necessary
+3. Forecast
+
+## Visualize
+- Let's plot Swedish GDP per capita from the ```global_economy``` dataset.
+```{r}
+#| output: false
+#| echo: true
+gdppc <- global_economy |>
+  mutate(GDP_per_capita = GDP / Population)
+gdppc |>
+  filter(Country == "Sweden") |>
+  autoplot(GDP_per_capita) +
+  labs(y = "$US", title = "GDP per capita for Sweden")
+```
+
+## Visualize
+- Let's plot Swedish GDP per capita from the ```global_economy``` dataset.
+```{r}
+gdppc <- global_economy |>
+  mutate(GDP_per_capita = GDP / Population)
+gdppc |>
+  filter(Country == "Sweden") |>
+  autoplot(GDP_per_capita) +
+  labs(y = "$US", title = "GDP per capita for Sweden")
+```
+
+## Specify a model
+- Linear trend:
+```{r}
+#| echo: true
+#| #| output: false
+TSLM(GDP_per_capita ~ trend())
+```
+
+## Estimate the model
+- To estimate the model, just specify the data you want to use:
+```{r}
+#| echo: true
+fit <- gdppc |>
+  model(trend_model = TSLM(GDP_per_capita ~ trend()))
+```
+
+## Estimate the model
+```{r}
+#| echo: true
+fit
+```
+
+## Evaluate the model
+- Important to check how well your model has performed. More in a bit.
+
+## Forecast
+- Use ```forecast()```!
+- To specify a timeframe for your forecast, use the ```h``` option:
+```{r}
+#| echo: true
+fit |>
+  forecast(h = 3)
+```
+
+## Forecast
+- The result is a "fable", a forecast table. Each row corresponds to one forecast period. The ```.mean``` column gives the average of the forecast distribution.
+- Plotting Sweden's forecast:
+```{r}
+#| output: false
+#| echo: true
+fit |>
+  forecast(h = "3 years") |>
+  filter(Country == "Sweden") |>
+  autoplot(gdppc) +
+  labs(y = "$US", title = "GDP per capita for Sweden")
+```
+
+## Forecast
+- The result is a "fable", a forecast table. Each row corresponds to one forecast period. The ```.mean``` column gives the average of the forecast distribution.
+- Plotting Sweden's forecast:
+```{r}
+#| echo: false
+fit |>
+  forecast(h = "3 years") |>
+  filter(Country == "Sweden") |>
+  autoplot(gdppc) +
+  labs(y = "$US", title = "GDP per capita for Sweden")
+```
+
+## More forecasting methods
+- So far we have only talked about using regression to produce forecasts. 
+- Next we'll dicsuss a few more simple forecasting methods.
+
+## Example dataset
+- Use Australian clay brick production between 1970 and 2004 as example:
+```{r}
+#| echo: true
+aus_production
+```
+
+## Example dataset
+- Use ```filter_index()``` to specify a range of the index to filter by:
+```{r}
+#| echo: true
+aus_production |>
+  filter_index("1970 Q1" ~ "2004 Q4")
+```
+
+## Example dataset
+- Use ```select()``` to restrict attention only to ```Bricks```:
+```{r}
+#| echo: true
+bricks <- aus_production |>
+  filter_index("1970 Q1" ~ "2004 Q4") |>
+  select(Bricks)
+```
+
+## Mean method
+- Use the mean of the historical data to forecast forward. 
+- The forecast estimate for a time series $y$ $h$ periods beyond the final observed period $T$:
+$$
+\hat{y}_{T+h|T} = \bar{y} = \frac{(y_{1} + ... + y_{t})}{T}
+$$
+
+## Mean method
+- The function ```model(MEAN())``` allows us to implement the mean method easily:
+```{r}
+#| echo: true
+#| output: false
+bricks |> 
+  model(MEAN(Bricks))
+```
+
+## Mean method: forecasting
+- The function ```model(MEAN())``` allows us to implement the mean method easily:
+```{r}
+#| echo: true
+#| output: false
+bricks |> 
+  model(MEAN(Bricks)) |>
+    forecast(h = 40)
+```
+
+## Mean method: plotting
+```{r}
+#| echo: true
+#| output: false
+mean_forecast <- bricks |> 
+  model(MEAN(Bricks)) |>
+    forecast(h = 40)
+autoplot(mean_forecast, bricks, level = NULL) + 
+  labs(title = "Mean forecast of clay brick production")
+```
+
+## Mean method: plotting
+```{r}
+#| echo: false
+#| output: true
+mean_forecast <- bricks |> 
+  model(MEAN(Bricks)) |>
+    forecast(h = 40)
+autoplot(mean_forecast, bricks, level = NULL) + 
+  labs(title = "Mean forecast of clay brick production")
+```
+
+## Na&iuml;ve method
+- Use value of last observation:
+$$
+\hat{y}_{T+h | T} = y_{T}
+$$
+
+## Na&iuml;ve method
+- Use value of last observation:
+$$
+\hat{y}_{T+h | T} = y_{T}
+$$
+- AKA **random walk** forecasts.
+
+## Na&iuml;ve implementation
+- Implement with ```model(NAIVE())```:
+```{r}
+#| echo: true
+bricks |>
+  model(NAIVE(Bricks))
+```
+
+## Na&iuml;ve forecast
+- Implement with ```model(NAIVE())```:
+```{r}
+#| echo: true
+naive_forecast <- bricks |>
+  model(NAIVE(Bricks)) |>
+    forecast(h = 40)
+```
+
+## Na&iuml;ve plotting
+- Implement with ```model(NAIVE())```:
+```{r}
+#| echo: true
+#| output: false
+naive_forecast <- bricks |>
+  model(NAIVE(Bricks)) |>
+    forecast(h = 40)
+autoplot(naive_forecast, bricks, level = NULL) +
+  labs(title = "Naive forecast of clay brick production")
+```
+
+## Na&iuml;ve plotting
+- Implement with ```model(NAIVE())```:
+```{r}
+#| echo: false
+#| output: true
+naive_forecast <- bricks |>
+  model(NAIVE(Bricks)) |>
+    forecast(h = 40)
+autoplot(naive_forecast, bricks, level = NULL) +
+  labs(title = "Naive forecast of clay brick production")
+```
+
+## Seasonal na&iuml;ve method
+- Use value of last within-season observation:
+$$
+\hat{y}_{T+h | T} = y_{T+h-m(k+1)}
+$$
+    - $m$: seasonal period
+    - $k$: number of years in forecast prior to $T+h$
+  
+## Seasonal na&iuml;ve implementation
+- Implement with ```model(SNAIVE())```:
+```{r}
+#| echo: true
+bricks |> 
+  model(SNAIVE(Bricks ~ lag("year")))
+```
+
+## Seasonal na&iuml;ve forecast
+```{r}
+#| echo: true
+bricks |>
+  model(SNAIVE(Bricks ~ lag("year"))) |>
+    forecast(h = 40)
+```
+
+## Seasonal na&iuml;ve plotting
+```{r}
+snaive_forecast <- bricks |>
+  model(SNAIVE(Bricks ~ lag("year"))) |>
+    forecast(h = 40)
+autoplot(snaive_forecast, bricks, level = NULL) +
+  labs(title = "Seasonal naive forecast of clay brick production")
+```
+
+## Drift method
+- Na&iuml;ve method allowing for "drift"
+
+## Drift method
+- Na&iuml;ve method allowing for "drift"
+    - Increase/decrease in forecast over time
+
+## Drift method
+- Na&iuml;ve method allowing for "drift"
+    - Increase/decrease in forecast over time
+- Drift set to average observed change
+
+## Drift method
+- Na&iuml;ve method allowing for "drift"
+    - Increase/decrease in forecast over time
+- Drift set to average observed change
+- Forecast for $T+h$:
+$$
+\hat{y}_{T+h | T} = y_{T} + h\frac{\sum_{t=2}^{T} (y_{t} - y_{t-1})}{T-2}  = y_{T} + h(\frac{y_{T}-y_{1}}{T-1})
+$$
+
+## Drift implementation
+- Use ```model(RW())```:
+```{r}
+#| echo: true
+bricks |>
+  model(RW(Bricks ~ drift()))
+```
+
+## Drift forecast
+```{r}
+#| echo: true
+bricks |>
+  model(RW(Bricks ~ drift())) |>
+    forecast(h = 40)
+```
+
+## Drift plotting
+```{r}
+#| echo: true
+#| output: false
+drift_forecast <- bricks |>
+  model(RW(Bricks ~ drift())) |>
+    forecast(h = 40)
+autoplot(drift_forecast, bricks, level = NULL) +
+  labs(title = "Drift forecast of clay brick production")
+```
+
+## Drift plotting
+```{r}
+#| echo: false
+#| output: true
+drift_forecast <- bricks |>
+  model(RW(Bricks ~ drift())) |>
+    forecast(h = 40)
+autoplot(drift_forecast, bricks, level = NULL) +
+  labs(title = "Drift forecast of clay brick production")
+```
+
