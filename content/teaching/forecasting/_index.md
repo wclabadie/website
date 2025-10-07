@@ -29,3 +29,7 @@ Welcome to the course!
 {{% staticref "teaching/forecasting/8 simple forecasting/8 forecasting tools.html" "newtab" %}}Lecture 8: Simple forecasting tools{{% /staticref %}}
 
 {{% staticref "teaching/forecasting/8 simple forecasting/6 simple forecasting.pdf" "newtab" %}}Lecture 8 exercise{{% /staticref %}}
+
+{{% staticref "teaching/forecasting/9 diagnostics/9 diagnostics.html" "newtab" %}}Lecture 9: diagnostics{{% /staticref %}}
+
+{{% staticref "teaching/forecasting/9 diagnostics/7-diagnostics.pdf" "newtab" %}}Lecture 9 exercise{{% /staticref %}}

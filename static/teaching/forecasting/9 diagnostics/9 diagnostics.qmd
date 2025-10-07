@@ -1,0 +1,214 @@
+---
+title: "Forecasting diagnostics"
+author: "BUS 323 Forecasting and Risk Analysis"
+format: revealjs
+editor: visual
+---
+
+## Fitted values
+- Mean method: $\hat{y}_{t} = \hat{c}$
+    - Where $\hat{c}$ is the mean of all observations of $y_{t}$.
+    
+## Fitted values
+- Mean method: $\hat{y}_{t} = \hat{c}$
+    - Where $\hat{c}$ is the mean of all observations of $y_{t}$.
+- Drift method: $\hat{y}_{t} = y_{t-1} + \hat{c}$
+    - Where $\hat{c}=\frac{y_{T}-y_{1}}{T-2}$.
+
+## Residuals
+- $e_{t} = y_{t} - \hat{y}_{t}$
+- **Innovation residuals**: residuals resulting from a transformation of the data.
+
+## Residuals
+- $e_{t} = y_{t} - \hat{y}_{t}$
+- **Innovation residuals**: residuals resulting from a transformation of the data.
+    - e.g. suppose $w_{t} = log(y_{t})$. 
+        
+## Residuals
+- $e_{t} = y_{t} - \hat{y}_{t}$
+- **Innovation residuals**: residuals resulting from a transformation of the data.
+    - e.g. suppose $w_{t} = log(y_{t})$. 
+        - Innovation residuals: $w_{t} - \hat{w}_{t}$.
+        
+## Residuals
+- $e_{t} = y_{t} - \hat{y}_{t}$
+- **Innovation residuals**: residuals resulting from a transformation of the data.
+    - e.g. suppose $w_{t} = log(y_{t})$. 
+        - Innovation residuals: $w_{t} - \hat{w}_{t}$.
+        - Residuals: $y_{t} - \hat{y}_{t}$. 
+        
+## Using residuals in R
+- After estimating a ```model()```, apply ```augment()``` to it.
+
+## Using residuals in R
+- After estimating a ```model()```, apply ```augment()``` to it.
+- Here are the models we estimated last time:
+```{r}
+#| echo: true
+#| output: false
+library(fpp3)
+bricks <- aus_production |>
+  filter_index("1970 Q1" ~ "2004 Q4") |>
+  select(Bricks)
+train <- aus_production |>
+  filter_index("1992 Q1" ~ "2006 Q4")
+# Fit the models
+beer_fit <- train |>
+  model(
+    Mean = MEAN(Beer),
+    `Naïve` = NAIVE(Beer),
+    `Seasonal naïve` = SNAIVE(Beer)
+  )
+```
+
+## Using residuals in R
+- After estimating a ```model()```, apply ```augment()``` to it.
+- After applying ```augment()```:
+```{r}
+#| echo: true
+#| output: true
+augment(beer_fit)
+```
+
+## Innovation residual properties
+Innovation residuals should...
+- be uncorrelated 
+- have zero mean
+- be homoskedastic
+- be Normally distributed
+
+## Example: Google closing stock prices
+- Innovation residual for a naive forecast?
+
+## Example: Google closing stock prices
+- Innovation residual for a naive forecast?
+    - $e_{t} = y_{t} - \hat{y}_{t} = y_{t} - y_{t-1}$.
+
+## Example: Google closing stock prices
+- Innovation residual for a naive forecast?
+    - $e_{t} = y_{t} - \hat{y}_{t} = y_{t} - y_{t-1}$.
+- Let's focus on 2015:
+```{r}
+#| echo: true
+#| output: false
+# Re-index to trading days
+google_stock <- gafa_stock |>
+  filter(Symbol == "GOOG", year(Date) >= 2015) |>
+  mutate(day = row_number()) |>
+  update_tsibble(index = day, regular = TRUE)
+# Filter the year of interest
+google_2015 <- google_stock |> filter(year(Date) == 2015)
+```
+
+## Example: Google closing stock prices
+- Innovation residual for a naive forecast?
+    - $e_{t} = y_{t} - \hat{y}_{t} = y_{t} - y_{t-1}$.
+- And make an autoplot:
+```{r}
+#| echo: false
+#| output: true
+autoplot(google_2015, Close) +
+  labs(y = "$US",
+       title = "Google daily closing stock prices in 2015")
+```
+
+## Example: Google closing stock prices residual autoplot
+- Autoplot the innovation residuals:
+
+## Example: Google closing stock prices residual autoplot
+- Autoplot the innovation residuals:
+```{r}
+#| echo: true
+#| output: true
+aug <- google_2015 |>
+  model(NAIVE(Close)) |>
+  augment()
+autoplot(aug, .innov) +
+  labs(y = "$US",
+       title = "Residuals from the naïve method")
+```
+
+## Example: Google closing stock prices residual histogram
+-Produce a histogram of the innovation residuals:
+
+## Example: Google closing stock prices residual histogram
+-Produce a histogram of the innovation residuals:
+```{r}
+#| echo: true
+#| output: true
+aug |>
+  ggplot(aes(x = .innov)) +
+  geom_histogram() +
+  labs(title = "Histogram of residuals")
+```
+
+## Example: Google closing stock prices ACF plot
+- Produce an ACF plot:
+
+## Example: Google closing stock prices ACF plot
+- Produce an ACF plot:
+```{r}
+#| echo: true
+#| output: true
+aug |>
+  ACF(.innov) |>
+  autoplot() +
+  labs(title = "Residuals from the naïve method")
+```
+
+## Example: Google closing stock prices tsresiduals()
+- You can use ```tsresiduals()``` to produce all of these:
+```{r}
+#| echo: true
+#| output: false
+google_2015 |>
+  model(NAIVE(Close)) |>
+  gg_tsresiduals()
+```
+
+## Example: Google closing stock prices tsresiduals()
+- You can use ```tsresiduals()``` to produce all of these:
+```{r}
+#| echo: false
+#| output: true
+google_2015 |>
+  model(NAIVE(Close)) |>
+  gg_tsresiduals()
+```
+
+## Portmanteau tests
+- Recall the Box-Pierce statistic:
+$$
+Q = T \sum_{k=1}^{l} r_{k}^{2}
+$$
+
+## Portmanteau tests
+- Recall the Box-Pierce statistic:
+$$
+Q = T \sum_{k=1}^{l} r_{k}^{2}
+$$
+and the Ljung-Box statistic:
+$$
+Q^{*} = T(T+2) \sum_{k=1}^{l} \frac{r_{k}^{2}}{T-k}
+$$
+
+## Portmanteau tests
+- Recall the Box-Pierce statistic:
+$$
+Q = T \sum_{k=1}^{l} r_{k}^{2}
+$$
+and the Ljung-Box statistic:
+$$
+Q^{*} = T(T+2) \sum_{k=1}^{l} \frac{r_{k}^{2}}{T-k}
+$$
+## Portmanteau tests
+- We can implement tests based on these statistics using the ```box_pierce``` and ```ljung_box``` options in ```features()```.
+    - In the following, ```lag```= $l$.
+```{r}
+#| echo: true
+#| output: true
+aug |> features(.innov, box_pierce, lag = 10)
+aug |> features(.innov, ljung_box, lag = 10)
+```
+
+
