@@ -33,3 +33,5 @@ Welcome to the course!
 {{% staticref "teaching/forecasting/9 diagnostics/9 diagnostics.html" "newtab" %}}Lecture 9: diagnostics{{% /staticref %}}
 
 {{% staticref "teaching/forecasting/9 diagnostics/7-diagnostics.pdf" "newtab" %}}Lecture 9 exercise{{% /staticref %}}
+
+{{% staticref "teaching/forecasting/9 diagnostics/10 prediction intervals.html" "newtab" %}}Lecture 10: prediction intervals{{% /staticref %}}
