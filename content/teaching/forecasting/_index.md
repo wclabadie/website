@@ -39,3 +39,7 @@ Welcome to the course!
 {{% staticref "teaching/forecasting/10 trans-decomp forecasts/11 trans-decomp forecasts.html" "newtab" %}}Lecture 11: Forecasting with transformation and decomposed time series{{% /staticref %}}
 
 {{% staticref "teaching/forecasting/10 trans-decomp forecasts/8 decomp forecasts.pdf" "newtab" %}}Lecture 11 exercise{{% /staticref %}}
+
+{{% staticref "teaching/forecasting/11 forecast accuracy/12 evaluation.html" "newtab" %}}Lecture 12: evaluating forecast accuracy{{% /staticref %}}
+
+{{% staticref "teaching/forecasting/11 forecast accuracy/9 accuracy.pdf" "newtab" %}}Lecture 12 exercise{{% /staticref %}}
