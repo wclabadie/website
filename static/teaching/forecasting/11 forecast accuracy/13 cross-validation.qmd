@@ -1,0 +1,142 @@
+---
+title: "Time series cross-validation"
+author: "BUS 323 Forecasting and Risk Analysis"
+format: 
+  revealjs:
+    incremental: true
+    html-math-method: mathjax
+editor: visual
+---
+
+## Cross-validation
+
+* Many training sets, many test sets.
+* Can be used for one- or multi-step forecasts.
+
+## ```stretch_tsibble()```
+
+* ```stretch_tsibble()``` can be used to create many training sets.
+    + ```.init``` defines length of initial training set.
+    + ```.step``` defines by how much each successive training set increases in length.
+    
+## Example: Google stock data
+
+* Using our 2015 Google stock price data again:
+```{r}
+#| echo: true
+#| output: false
+#| classes: fragment
+library(fpp3)
+google_stock <- gafa_stock |>
+    filter(Symbol == "GOOG", year(Date) >= 2015) |>
+    mutate(day = row_number()) |>
+    update_tsibble(index = day, regular = TRUE)
+# Filter for training set
+google_2015 <- google_stock |> filter(year(Date) == 2015)
+```
+
+## Example: Google stock data
+
+* Use ```stretch_tsibble()``` with ```.init=3``` and ```.step=1```.
+* Use ```relocate()``` to put index variables up front:
+```{r}
+#| echo: true
+#| output: true
+#| classes: fragment
+google_2015_tr <- google_2015 |>
+  stretch_tsibble(.init = 3, .step = 1) |>
+  relocate(Date, Symbol, .id)
+google_2015_tr
+```
+
+## Example: Google stock data
+
+* Use ```accuracy()``` to evaluate forecast accuracy *across* training sets:
+```{r}
+#| echo: true
+#| output: true
+#| classes: fragment
+google_2015_tr |>
+  model(RW(Close ~ drift())) |>
+  forecast(h = 1) |>
+  accuracy(google_2015)
+```
+
+## Example: Google stock data
+
+* We can evaluate the accuracy of multi-step forecasts:
+```{r}
+#| echo: true
+#| output: true
+#| classes: fragment
+fc <- google_2015_tr |>
+  model(RW(Close ~ drift())) |>
+  forecast(h = 8)
+```
+
+## Example: Google stock data
+
+* We can evaluate the accuracy of multi-step forecasts:
+```{r}
+#| echo: true
+#| output: true
+#| classes: fragment
+fc <- google_2015_tr |>
+  model(RW(Close ~ drift())) |>
+  forecast(h = 8) |>
+  group_by(.id) |>
+  mutate(h = row_number())
+```
+
+## Example: Google stock data
+
+* We can evaluate the accuracy of multi-step forecasts:
+```{r}
+#| echo: true
+#| output: true
+#| classes: fragment
+fc <- google_2015_tr |>
+  model(RW(Close ~ drift())) |>
+  forecast(h = 8) |>
+  group_by(.id) |>
+  mutate(h = row_number()) |>
+  ungroup() |>
+  as_fable(response = "Close", distribution = Close)
+```
+
+## Example: Google stock data
+
+* We can evaluate the accuracy of multi-step forecasts:
+```{r}
+#| echo: true
+#| output: true
+#| classes: fragment
+fc |>
+  accuracy(google_2015, by = c("h", ".model"))
+```
+
+## Example: Google stock data
+
+* We can evaluate the accuracy of multi-step forecasts:
+```{r}
+#| echo: true
+#| output: false
+#| classes: fragment
+fc |>
+  accuracy(google_2015, by = "h") |>
+  ggplot(aes(x = h, y = RMSE)) +
+  geom_point()
+```
+
+## Example: Google stock data
+
+* We can evaluate the accuracy of multi-step forecasts:
+```{r}
+#| echo: false
+#| output: true
+#| classes: fragment
+fc |>
+  accuracy(google_2015, by = "h") |>
+  ggplot(aes(x = h, y = RMSE)) +
+  geom_point()
+```
