@@ -48,6 +48,6 @@ Welcome to the course!
 
 {{% staticref "teaching/forecasting/Report-2.pdf" "newtab" %}}Report 2{{% /staticref %}}
 
-{{% staticref "teaching/forecasting/12 exponential smoothing/14 exponential-smoothing I.html" "newtab" %}}Lecture 14: exponential smoothing I{{% /staticref %}}
+{{% staticref "teaching/forecasting/12 exponential smoothing/14 exponential smoothing I.html" "newtab" %}}Lecture 14: exponential smoothing I{{% /staticref %}}
 
 {{% staticref "teaching/forecasting/12 exponential smoothing/10 exponential smoothing I.pdf" "newtab" %}}Lecture 14 exercise{{% /staticref %}}
