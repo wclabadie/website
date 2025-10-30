@@ -1,0 +1,341 @@
+---
+title: "Exponential smoothing"
+author: "BUS 323 Forecasting and Risk Analysis"
+format: 
+  revealjs:
+    incremental: true
+    html-math-method: mathjax
+editor: visual
+---
+
+## Simple exponential smoothing
+* Naive method:
+<div class="fragment">
+$$
+\widehat{y}_{T+h|T} = y_{T}
+$$
+</div>
+    + All weight given to observation $T$
+* Mean method:
+<div class="fragment">
+$$
+\widehat{y}_{T+h|T} = \frac{\sum_{t=1}^{T}y_{t}}{T}
+$$
+</div>
+    + All observations equally weighted
+
+## Simple exponential smoothing
+* We might want something in between.
+    + More weight to recent observations 
+    + Less weight to those in the distant past
+* Simple exponential smoothing
+<div class="fragment">
+$$
+\widehat{y}_{T+1|T} = \alpha y_{T} + \alpha(1-\alpha) y_{T-1} + \alpha(1-\alpha)^{2} y_{T-2} + ...
+$$
+</div>
+    + $0 \leq \alpha \leq 1$: *smoothing parameter*
+
+## Optimization
+* Need to estimate $\alpha$ and $l_{0}$.
+* As with regression, seek to minimize SSE (sum of squared errors):
+<div class="fragment">
+$$
+SSE = \sum_{t=1}^{T} (y_{t} - \widehat{y}_{t|t-1})^{2} = \sum_{t=1}^{t} e_{t}^{2}
+$$
+</div>
+* No OLS SSE-minimizing formulae here
+
+## Example: Algerian exports
+* Simple exponential smoothing works best with data with no trend or seasonality.
+```{r}
+#| echo: true
+#| output: false
+#| classes: fragment
+library(fpp3)
+algeria_economy <- global_economy |>
+  filter(Country == "Algeria")
+algeria_economy |>
+  autoplot(Exports) +
+  labs(y = "% of GDP", title = "Exports: Algeria")
+```
+
+## Example: Algerian exports
+```{r}
+#| echo: false
+#| output: true
+#| classes: fragment
+algeria_economy <- global_economy |>
+  filter(Country == "Algeria")
+algeria_economy |>
+  autoplot(Exports) +
+  labs(y = "% of GDP", title = "Exports: Algeria")
+```
+
+## Example: Algerian exports
+* To estimate an exponential smoothing model, use the ```ETS()``` option in ```model()```:
+```{r}
+#| echo: true
+#| output: true
+#| classes: fragment
+fit <- algeria_economy |>
+  model(ets_model = ETS(Exports ~ error("A") + trend("N") + season("N")))
+# extract parameters
+fit$ets_model[[1]]$fit$par
+```
+
+## Example: Algerian exports
+* Produce a 5-step forecast:
+```{r}
+#| echo: true
+#| output: true
+#| classes: fragment
+fc <- fit |>
+  forecast(h = 5)
+```
+
+## Example: Algerian exports
+* Plot forecast + historical data:
+```{r}
+#| echo: true
+#| output: false
+#| classes: fragment
+fc |>
+  autoplot(algeria_economy) +
+  geom_line(aes(y = .fitted), col="#D55E00",
+            data = augment(fit)) +
+  labs(y="% of GDP", title="Exports: Algeria") +
+  guides(colour = "none")
+```
+
+## Example: Algerian exports
+* Plot forecast + historical data:
+```{r}
+#| echo: false
+#| output: true
+#| classes: fragment
+fc |>
+  autoplot(algeria_economy) +
+  geom_line(aes(y = .fitted), col="#D55E00",
+            data = augment(fit)) +
+  labs(y="% of GDP", title="Exports: Algeria") +
+  guides(colour = "none")
+```
+
+## Exponential smoothing with trend
+* Holt's linear trend method:
+<div class="fragment">
+$$
+\begin{align}
+\textrm{Forecast equation. } & \widehat{y}_{t+h|t} = l_{t} + hb_{t} 
+\end{align}
+$$
+</div>
+<div class="fragment">
+$$
+\begin{align}
+\textrm{Level equation. } & l_{t} = \alpha y_{t} + (1-\alpha)(l_{t-1} + b_{t-1}) 
+\end{align}
+$$
+</div>
+<div class="fragment">
+$$
+\begin{align}
+\textrm{Trend equation. } & b_{t} = \beta^{*} (l_{t} - l_{t-1}) + (1-\beta^{*})b_{t-1}
+\end{align}
+$$
+</div>
+    + $l_{t}$: level of $y$ at $t$
+    + $b_{t}$: trend of $y$ at $t$
+    + $\alpha$: smoothing parameter for level
+    + $\beta^{*}$: smoothing parameter for trend
+    
+## Example: Australian population
+* Use a series with a trend:
+```{r}
+#| echo: true
+#| output: false
+#| classes: fragment
+aus_economy <- global_economy |>
+  filter(Code == "AUS") |>
+  mutate(Pop = Population / 1e6)
+autoplot(aus_economy, Pop) +
+  labs(y = "Millions", title = "Australian population")
+```
+
+## Example: Australian population
+* Use a series with a trend:
+```{r}
+#| echo: false
+#| output: true
+#| classes: fragment
+aus_economy <- global_economy |>
+  filter(Code == "AUS") |>
+  mutate(Pop = Population / 1e6)
+autoplot(aus_economy, Pop) +
+  labs(y = "Millions", title = "Australian population")
+```
+
+## Example: Australian population
+* Apply Holt's method by using the ```trend("A")``` option within ```model(ETS())```.
+    + $\alpha$, $\beta^{*}$, $l_{0}$, $b_{0}$ estimated by minimizing SSE for one-step training errors.
+```{r}
+#| echo: true
+#| output: true
+#| classes: fragment
+fit <- aus_economy |>
+  model(
+    AAN = ETS(Pop ~ error("A") + trend("A") + season("N"))
+  )
+fit$AAN[[1]]$fit$par
+```
+
+## Damped trend methods
+* Gardner-McKenzie method:
+<div class="fragment">
+$$
+\widehat{y}_{t+h|t} = l_{t} + (\phi + \phi^{2} + ... + \phi^{h})b_{t}
+$$
+</div>
+    + $0 < \phi < 1$: *damping parameter*
+<div class="fragment">
+$$
+l_{t} = \alpha y_{t} + (1-\alpha)(l_{t-1} + \phi b_{t-1})
+$$
+</div>
+<div class="fragment">
+$$
+b_{t} = \beta^{*}(l_{t}-l_{t-1}) + (1-\beta^{*}) \phi b_{t-1}
+$$
+</div>
+    + Forecasts converge to $l_{T} + \frac{\phi b_{T}}{1-\phi}$ in the limit of $h$
+    + Long-run forecasts: constant
+    + Short-run forecasts: trended
+* Usually $0.8 \leq \phi \leq 0.98$.
+
+## Example: Australian population
+* Compare a trended model to a damped trended model (use $\phi=0.9$). Estimate 15-step forecasts:
+```{r}
+#| echo: true
+#| output: true
+#| classes: fragment
+aus_economy |>
+  model(
+    `Holt's method` = ETS(Pop ~ error("A") +
+                       trend("A") + season("N")),
+    `Damped Holt's method` = ETS(Pop ~ error("A") +
+                       trend("Ad", phi = 0.9) + season("N"))
+  ) |>
+  forecast(h=15)
+```
+
+## Example: Australian population
+* And plot:
+```{r}
+#| echo: true
+#| output: false
+#| classes: fragment
+aus_economy |>
+  model(
+    `Holt's method` = ETS(Pop ~ error("A") +
+                       trend("A") + season("N")),
+    `Damped Holt's method` = ETS(Pop ~ error("A") +
+                       trend("Ad", phi = 0.9) + season("N"))
+  ) |>
+  forecast(h = 15) |>
+  autoplot(aus_economy, level = NULL) +
+  labs(title = "Australian population",
+       y = "Millions") +
+  guides(colour = guide_legend(title = "Forecast"))
+```
+
+## Example: Australian population
+* And plot:
+```{r}
+#| echo: false
+#| output: true
+#| classes: fragment
+aus_economy |>
+  model(
+    `Holt's method` = ETS(Pop ~ error("A") +
+                       trend("A") + season("N")),
+    `Damped Holt's method` = ETS(Pop ~ error("A") +
+                       trend("Ad", phi = 0.9) + season("N"))
+  ) |>
+  forecast(h = 15) |>
+  autoplot(aus_economy, level = NULL) +
+  labs(title = "Australian population",
+       y = "Millions") +
+  guides(colour = guide_legend(title = "Forecast"))
+```
+
+## Example: internet usage
+* Which method works best for these data?
+```{r}
+#| echo: true
+#| output: false
+#| classes: fragment
+www_usage <- as_tsibble(WWWusage)
+www_usage |> autoplot(value) +
+  labs(x="Minute", y="Number of users",
+       title = "Internet usage per minute")
+```
+
+## Example: internet usage
+* Which method works best for these data?
+```{r}
+#| echo: false
+#| output: true
+#| classes: fragment
+www_usage <- as_tsibble(WWWusage)
+www_usage |> autoplot(value) +
+  labs(x="Minute", y="Number of users",
+       title = "Internet usage per minute")
+```
+
+## Example: internet usage
+* Estimate a 1-step forecast for all three smoothing methods.
+* Use cross-validation (use an initial sample of size 10) to evaluate accuracy.
+```{r}
+#| echo: true
+#| output: true
+#| classes: fragment
+www_usage |>
+  stretch_tsibble(.init = 10) |>
+  model(
+    SES = ETS(value ~ error("A") + trend("N") + season("N")),
+    Holt = ETS(value ~ error("A") + trend("A") + season("N")),
+    Damped = ETS(value ~ error("A") + trend("Ad") +
+                   season("N"))
+  ) |>
+  forecast(h = 1) |>
+  accuracy(www_usage)
+```
+
+## Example: internet usage
+* Use the best-performing method to forecast 10 steps into the future. Estimate:
+```{r}
+#| echo: true
+#| output: true
+#| classes: fragment
+fit <- www_usage |>
+  model(
+    Damped = ETS(value ~ error("A") + trend("Ad") +
+                   season("N"))
+  )
+tidy(fit)
+```
+
+## Example: internet usage
+* Forecast:
+```{r}
+#| echo: true
+#| output: false
+#| classes: fragment
+fit |>
+  forecast(h = 10) |>
+  autoplot(www_usage) +
+  labs(x="Minute", y="Number of users",
+       title = "Internet usage per minute")
+```
+
