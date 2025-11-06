@@ -399,9 +399,8 @@ BUS 323 Forecasting and Risk Analysis
 </div>
 
 </section>
-<section class="slide level2">
-
-<h3 id="exponential-smoothing">Exponential smoothing</h3>
+<section id="exponential-smoothing" class="title-slide slide level1 center">
+<h1>Exponential smoothing</h1>
 <ul>
 <li class="fragment">Simple model:
 <div class="fragment">
@@ -424,7 +423,10 @@ b_{t} &amp; = \beta^{*} (l_{t} - l_{t-1}) + (1-\beta^{*})b_{t-1}
 </div></li>
 <li class="fragment">Now we’ll add seasonality.</li>
 </ul>
-<h3 id="holt-winters-additive-method">Holt-Winters’ additive method</h3>
+</section>
+
+<section id="holt-winters-additive-method" class="title-slide slide level1 center">
+<h1>Holt-Winters’ additive method</h1>
 <ul>
 <li class="fragment">Forecast equation:
 <div class="fragment">
@@ -442,7 +444,10 @@ s_{t} &amp; = \gamma (y_{t} - l_{t-1} - b_{t-1}) + (1 - \gamma) s_{t-m}
 \]</span></p>
 </div></li>
 </ul>
-<h3 id="holt-winters-multiplicative-method">Holt-Winters’ multiplicative method</h3>
+</section>
+
+<section id="holt-winters-multiplicative-method" class="title-slide slide level1 center">
+<h1>Holt-Winters’ multiplicative method</h1>
 <div class="fragment">
 <p><span class="math display">\[
 \begin{align}
@@ -453,7 +458,10 @@ s_{t} &amp; = \gamma \frac{y_{t}}{(l_{t-1} + b_{t-1})} + (1 - \gamma) s_{t-m}
 \end{align}
 \]</span></p>
 </div>
-<h3 id="example-domestic-overnight-trips">Example: Domestic overnight trips</h3>
+</section>
+
+<section id="example-domestic-overnight-trips" class="title-slide slide level1 center">
+<h1>Example: Domestic overnight trips</h1>
 <ul>
 <li class="fragment">Let’s examine a data series with a clear seasonal component.</li>
 <li class="fragment">Using the <code>tourism</code> dataset, look at total holiday trips</li>
@@ -479,7 +487,10 @@ s_{t} &amp; = \gamma \frac{y_{t}}{(l_{t-1} + b_{t-1})} + (1 - \gamma) s_{t-m}
 # ℹ 24,310 more rows</code></pre>
 </div>
 </div>
-<h3 id="example-domestic-overnight-trips-1">Example: Domestic overnight trips</h3>
+</section>
+
+<section id="example-domestic-overnight-trips-1" class="title-slide slide level1 center">
+<h1>Example: Domestic overnight trips</h1>
 <ul>
 <li class="fragment">Let’s examine a data series with a clear seasonal component.</li>
 <li class="fragment">Using the <code>tourism</code> dataset, look at total holiday trips
@@ -508,7 +519,10 @@ s_{t} &amp; = \gamma \frac{y_{t}}{(l_{t-1} + b_{t-1})} + (1 - \gamma) s_{t-m}
 # ℹ 6,070 more rows</code></pre>
 </div>
 </div>
-<h3 id="example-domestic-overnight-trips-2">Example: Domestic overnight trips</h3>
+</section>
+
+<section id="example-domestic-overnight-trips-2" class="title-slide slide level1 center">
+<h1>Example: Domestic overnight trips</h1>
 <ul>
 <li class="fragment">Let’s examine a data series with a clear seasonal component.</li>
 <li class="fragment">Using the <code>tourism</code> dataset, look at total holiday trips
@@ -538,7 +552,10 @@ s_{t} &amp; = \gamma \frac{y_{t}}{(l_{t-1} + b_{t-1})} + (1 - \gamma) s_{t-m}
 # ℹ 70 more rows</code></pre>
 </div>
 </div>
-<h3 id="example-domestic-overnight-trips-3">Example: Domestic overnight trips</h3>
+</section>
+
+<section id="example-domestic-overnight-trips-3" class="title-slide slide level1 center">
+<h1>Example: Domestic overnight trips</h1>
 <ul>
 <li class="fragment">Let’s examine a data series with a clear seasonal component.</li>
 <li class="fragment">Using the <code>tourism</code> dataset, look at total holiday trips
@@ -553,7 +570,10 @@ s_{t} &amp; = \gamma \frac{y_{t}}{(l_{t-1} + b_{t-1})} + (1 - \gamma) s_{t-m}
 <span id="cb7-2"><a href="#cb7-2"></a>  <span class="fu">filter</span>(Purpose <span class="sc">==</span> <span class="st">"Holiday"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb7-3"><a href="#cb7-3"></a>  <span class="fu">summarise</span>(<span class="at">Trips =</span> <span class="fu">sum</span>(Trips)<span class="sc">/</span><span class="fl">1e3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<h3 id="example-domestic-overnight-trips-4">Example: Domestic overnight trips</h3>
+</section>
+
+<section id="example-domestic-overnight-trips-4" class="title-slide slide level1 center">
+<h1>Example: Domestic overnight trips</h1>
 <ul>
 <li class="fragment">To apply the Holt-Winters method, use <code>model(ETS())</code> as before
 <ul>
@@ -570,7 +590,10 @@ s_{t} &amp; = \gamma \frac{y_{t}}{(l_{t-1} + b_{t-1})} + (1 - \gamma) s_{t-m}
 <span id="cb8-6"><a href="#cb8-6"></a>                                                <span class="fu">season</span>(<span class="st">"M"</span>))</span>
 <span id="cb8-7"><a href="#cb8-7"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<h3 id="example-domestic-overnight-trips-5">Example: Domestic overnight trips</h3>
+</section>
+
+<section id="example-domestic-overnight-trips-5" class="title-slide slide level1 center">
+<h1>Example: Domestic overnight trips</h1>
 <ul>
 <li class="fragment">Produce forecasts for the next three years and plot</li>
 </ul>
@@ -582,13 +605,19 @@ s_{t} &amp; = \gamma \frac{y_{t}}{(l_{t-1} + b_{t-1})} + (1 - \gamma) s_{t-m}
 <span id="cb9-5"><a href="#cb9-5"></a>       <span class="at">y=</span><span class="st">"Overnight trips (millions)"</span>) <span class="sc">+</span></span>
 <span id="cb9-6"><a href="#cb9-6"></a>  <span class="fu">guides</span>(<span class="at">colour =</span> <span class="fu">guide_legend</span>(<span class="at">title =</span> <span class="st">"Forecast"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<h3 id="example-domestic-overnight-trips-6">Example: Domestic overnight trips</h3>
+</section>
+
+<section id="example-domestic-overnight-trips-6" class="title-slide slide level1 center">
+<h1>Example: Domestic overnight trips</h1>
 <div class="cell fragment">
 <div class="cell-output-display">
 <p><img data-src="15-exponential-smoothing-II_files/figure-revealjs/unnamed-chunk-14-1.png" width="960"></p>
 </div>
 </div>
-<h3 id="state-space-models">State space models</h3>
+</section>
+
+<section id="state-space-models" class="title-slide slide level1 center">
+<h1>State space models</h1>
 <ul>
 <li class="fragment">Each of the models we’ve looked at has:
 <ul>
@@ -597,7 +626,10 @@ s_{t} &amp; = \gamma \frac{y_{t}}{(l_{t-1} + b_{t-1})} + (1 - \gamma) s_{t-m}
 </ul></li>
 <li class="fragment">Taken together, the models are called <strong>state space models</strong></li>
 </ul>
-<h3 id="state-space-models-1">State space models</h3>
+</section>
+
+<section id="state-space-models-1" class="title-slide slide level1 center">
+<h1>State space models</h1>
 <ul>
 <li class="fragment">Can be additive or multiplicative</li>
 <li class="fragment">These are broadly referred to as ETS models (Error, Trend, Seasonal)
@@ -607,7 +639,10 @@ s_{t} &amp; = \gamma \frac{y_{t}}{(l_{t-1} + b_{t-1})} + (1 - \gamma) s_{t-m}
 <li class="fragment">Seasonal = N, A, M</li>
 </ul></li>
 </ul>
-<h3 id="etsann">ETS(A,N,N)</h3>
+</section>
+
+<section id="etsann" class="title-slide slide level1 center">
+<h1>ETS(A,N,N)</h1>
 <ul>
 <li class="fragment">Recall:
 <div class="fragment">
@@ -628,7 +663,10 @@ l_{t} &amp; = l_{t-1} + \alpha (y_{t} - l_{t-1}) \\
 \]</span></p>
 </div></li>
 </ul>
-<h3 id="etsann-1">ETS(A,N,N)</h3>
+</section>
+
+<section id="etsann-1" class="title-slide slide level1 center">
+<h1>ETS(A,N,N)</h1>
 <ul>
 <li class="fragment">To finally specify our state space model, we have to make an assumption about the probability distribution of the residuals <span class="math inline">\(e_{t}\)</span>.
 <ul>
@@ -644,14 +682,12 @@ l_{t} &amp; = l_{t-1} + \alpha (y_{t} - l_{t-1}) \\
 \]</span></p>
 </div></li>
 </ul>
-<h3 id="a-taxonomy-of-ets-models">A taxonomy of ETS models</h3>
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="ets%20taxonomy.png"></p>
-<p></p><figcaption>Figure: Measurement and state equations for various ETS models</figcaption><p></p>
-</figure>
-</div>
-<div class="footer footer-default">
+</section>
+
+<section id="a-taxonomy-of-ets-models" class="title-slide slide level1 center">
+<h1>A taxonomy of ETS models</h1>
+
+<img data-src="ets%20taxonomy.png" class="r-stretch quarto-figure-center"><p class="caption">Figure: Measurement and state equations for various ETS models</p><div class="footer footer-default">
 
 </div>
 </section>

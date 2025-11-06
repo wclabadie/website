@@ -8,7 +8,7 @@ format:
 editor: visual
 ---
 
-### Exponential smoothing
+# Exponential smoothing
 
 -   Simple model: 
 <div class="fragment">
@@ -31,7 +31,7 @@ $$
 </div>
 -   Now we'll add seasonality.
 
-### Holt-Winters' additive method
+# Holt-Winters' additive method
 
 -   Forecast equation: 
 <div class="fragment">
@@ -49,7 +49,7 @@ s_{t} & = \gamma (y_{t} - l_{t-1} - b_{t-1}) + (1 - \gamma) s_{t-m}
 $$ 
 </div>
 
-### Holt-Winters' multiplicative method
+# Holt-Winters' multiplicative method
 <div class="fragment">
 $$
 \begin{align}
@@ -61,7 +61,7 @@ s_{t} & = \gamma \frac{y_{t}}{(l_{t-1} + b_{t-1})} + (1 - \gamma) s_{t-m}
 $$
 </div>
 
-### Example: Domestic overnight trips
+# Example: Domestic overnight trips
 - Let's examine a data series with a clear seasonal component.
 - Using the ```tourism``` dataset, look at total holiday trips
 ```{r}
@@ -72,7 +72,7 @@ library(fpp3)
 tourism
 ```
 
-### Example: Domestic overnight trips
+# Example: Domestic overnight trips
 - Let's examine a data series with a clear seasonal component.
 - Using the ```tourism``` dataset, look at total holiday trips
     + So we'll need to filter by ```Purpose``` 
@@ -84,7 +84,7 @@ tourism |>
   filter(Purpose == "Holiday")
 ```
 
-### Example: Domestic overnight trips
+# Example: Domestic overnight trips
 - Let's examine a data series with a clear seasonal component.
 - Using the ```tourism``` dataset, look at total holiday trips
     + So we'll need to filter by ```Purpose``` 
@@ -98,7 +98,7 @@ tourism |>
   summarise(Trips = sum(Trips)/1e3)
 ```
     
-### Example: Domestic overnight trips
+# Example: Domestic overnight trips
 - Let's examine a data series with a clear seasonal component.
 - Using the ```tourism``` dataset, look at total holiday trips
     + So we'll need to filter by ```Purpose``` 
@@ -113,7 +113,7 @@ aus_holidays <- tourism |>
   summarise(Trips = sum(Trips)/1e3)
 ```
 
-### Example: Domestic overnight trips
+# Example: Domestic overnight trips
 - To apply the Holt-Winters method, use ```model(ETS())``` as before
     + Specify the option ```season("A")``` for additive
     + ```season("M")``` for multiplicative
@@ -130,7 +130,7 @@ fit <- aus_holidays |>
   )
 ```
 
-### Example: Domestic overnight trips
+# Example: Domestic overnight trips
 - Produce forecasts for the next three years and plot
 ```{r}
 #| echo: true
@@ -144,7 +144,7 @@ fc |>
   guides(colour = guide_legend(title = "Forecast"))
 ```
 
-### Example: Domestic overnight trips
+# Example: Domestic overnight trips
 ```{r}
 #| echo: false
 #| output: true
@@ -157,20 +157,20 @@ fc |>
   guides(colour = guide_legend(title = "Forecast"))
 ```
 
-### State space models
+# State space models
 - Each of the models we've looked at has:
     + A measurement equation that describes observed data
     + State equation(s) that describe unobserved components
 - Taken together, the models are called **state space models**
 
-### State space models
+# State space models
 - Can be additive or multiplicative
 - These are broadly referred to as ETS models (Error, Trend, Seasonal)    
     + Error = A, M
     + Trend = N, A, $A_{d}$
     + Seasonal = N, A, M
     
-### ETS(A,N,N)
+# ETS(A,N,N)
 - Recall: 
 <div class="fragment">
 $$
@@ -190,7 +190,7 @@ l_{t} & = l_{t-1} + \alpha (y_{t} - l_{t-1}) \\
 $$
 </div>
 
-### ETS(A,N,N)
+# ETS(A,N,N)
 - To finally specify our state space model, we have to make an assumption about the probability distribution of the residuals $e_{t}$.
     + With additive errors, residuals are usually assumed $\epsilon_{t} \sim N(0,\sigma ^{2})$. 
 - Then we can write our model:
@@ -203,6 +203,6 @@ $$
 $$
 </div>
 
-### A taxonomy of ETS models
+# A taxonomy of ETS models
 ![Figure: Measurement and state equations for various ETS models](ets taxonomy.png)
 
