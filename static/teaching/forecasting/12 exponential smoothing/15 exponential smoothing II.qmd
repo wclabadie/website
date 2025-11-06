@@ -1,0 +1,208 @@
+---
+title: "Exponential smoothing"
+author: "BUS 323 Forecasting and Risk Analysis"
+format: 
+  revealjs:
+    incremental: true
+    html-math-method: mathjax
+editor: visual
+---
+
+# Exponential smoothing
+
+-   Simple model: 
+<div class="fragment">
+$$
+\begin{align}
+\widehat{y}_{T+1|T} = & \alpha y_{T} + \alpha(1-\alpha) y_{T-1} \\
+& + \alpha(1-\alpha)^{2} y_{T-2} + ...
+\end{align}
+$$ 
+</div>
+-   Simple model with trend: 
+<div class="fragment">
+$$
+\begin{align}
+\widehat{y}_{t+h|t} & = l_{t} + hb_{t} \\
+l_{t} & = \alpha y_{t} + (1-\alpha)(l_{t-1} + b_{t-1}) \\
+b_{t} & = \beta^{*} (l_{t} - l_{t-1}) + (1-\beta^{*})b_{t-1}
+\end{align}
+$$
+</div>
+-   Now we'll add seasonality.
+
+# Holt-Winters' additive method
+
+-   Forecast equation: 
+<div class="fragment">
+$$
+\widehat{y}_{t+h|t} = l_{t} + hb_{t} + s_{t+h-m(k+1)}
+$$
+</div>
+<div class="fragment">
+$$ 
+\begin{align}
+l_{t} & = \alpha (y_{t} - s_{t-m}) + (1 - \alpha) (l_{t-1} + b_{t-1}) \\
+b_{t} & = \beta^{*} (l_{t} - l_{t-1}) + (1 - \beta^{*}) b_{t-1} \\
+s_{t} & = \gamma (y_{t} - l_{t-1} - b_{t-1}) + (1 - \gamma) s_{t-m}
+\end{align}
+$$ 
+</div>
+
+# Holt-Winters' multiplicative method
+<div class="fragment">
+$$
+\begin{align}
+\widehat{y}_{t+h|t} & = (l_{t} + h b_{t}) s_{t+h-m(k+1)} \\
+l_{t} & = \alpha \frac{y_{t}}{s_{t-m}} + (1 - \alpha) (l_{t-1} + b_{t-1}) \\
+b_{t} & = \beta^{*} (l_{t} - l_{t-1}) + (1 - \beta^{*})b_{t-1} \\
+s_{t} & = \gamma \frac{y_{t}}{(l_{t-1} + b_{t-1})} + (1 - \gamma) s_{t-m}
+\end{align}
+$$
+</div>
+
+# Example: Domestic overnight trips
+- Let's examine a data series with a clear seasonal component.
+- Using the ```tourism``` dataset, look at total holiday trips
+```{r}
+#| echo: true
+#| output: true
+#| classes: fragment
+library(fpp3)
+tourism
+```
+
+# Example: Domestic overnight trips
+- Let's examine a data series with a clear seasonal component.
+- Using the ```tourism``` dataset, look at total holiday trips
+    + So we'll need to filter by ```Purpose``` 
+```{r}
+#| echo: true
+#| output: true
+#| classes: fragment
+tourism |>
+  filter(Purpose == "Holiday")
+```
+
+# Example: Domestic overnight trips
+- Let's examine a data series with a clear seasonal component.
+- Using the ```tourism``` dataset, look at total holiday trips
+    + So we'll need to filter by ```Purpose``` 
+    + And sum over all regions.
+```{r}
+#| echo: true
+#| output: true
+#| classes: fragment
+tourism |>
+  filter(Purpose == "Holiday") |>
+  summarise(Trips = sum(Trips)/1e3)
+```
+    
+# Example: Domestic overnight trips
+- Let's examine a data series with a clear seasonal component.
+- Using the ```tourism``` dataset, look at total holiday trips
+    + So we'll need to filter by ```Purpose``` 
+    + And sum over all regions.
+    + Call the resulting dataset ```aus_holidays```
+```{r}
+#| echo: true
+#| output: false
+#| classes: fragment
+aus_holidays <- tourism |>
+  filter(Purpose == "Holiday") |>
+  summarise(Trips = sum(Trips)/1e3)
+```
+
+# Example: Domestic overnight trips
+- To apply the Holt-Winters method, use ```model(ETS())``` as before
+    + Specify the option ```season("A")``` for additive
+    + ```season("M")``` for multiplicative
+```{r}
+#| echo: true
+#| output: false
+#| classes: fragment
+fit <- aus_holidays |>
+  model(
+    additive = ETS(Trips ~ error("A") + trend("A") +
+                                                season("A")),
+    multiplicative = ETS(Trips ~ error("M") + trend("A") +
+                                                season("M"))
+  )
+```
+
+# Example: Domestic overnight trips
+- Produce forecasts for the next three years and plot
+```{r}
+#| echo: true
+#| output: false
+#| classes: fragment
+fc <- fit |> forecast(h = "3 years")
+fc |>
+  autoplot(aus_holidays, level = NULL) +
+  labs(title="Australian domestic tourism",
+       y="Overnight trips (millions)") +
+  guides(colour = guide_legend(title = "Forecast"))
+```
+
+# Example: Domestic overnight trips
+```{r}
+#| echo: false
+#| output: true
+#| classes: fragment
+fc <- fit |> forecast(h = "3 years")
+fc |>
+  autoplot(aus_holidays, level = NULL) +
+  labs(title="Australian domestic tourism",
+       y="Overnight trips (millions)") +
+  guides(colour = guide_legend(title = "Forecast"))
+```
+
+# State space models
+- Each of the models we've looked at has:
+    + A measurement equation that describes observed data
+    + State equation(s) that describe unobserved components
+- Taken together, the models are called **state space models**
+
+# State space models
+- Can be additive or multiplicative
+- These are broadly referred to as ETS models (Error, Trend, Seasonal)    
+    + Error = A, M
+    + Trend = N, A, $A_{d}$
+    + Seasonal = N, A, M
+    
+# ETS(A,N,N)
+- Recall: 
+<div class="fragment">
+$$
+\begin{align}
+\widehat{y}_{t+1|t} & = l_{t} \\
+l_{t} & = \alpha y_{t} + (1 - \alpha) l_{t-1}
+\end{align}
+$$
+</div>
+We can re-express the smoothign equation as:
+<div class="fragment">
+$$
+\begin{align}
+l_{t} & = l_{t-1} + \alpha (y_{t} - l_{t-1}) \\
+& = l_{t-1} + \alpha e_{t}
+\end{align}
+$$
+</div>
+
+# ETS(A,N,N)
+- To finally specify our state space model, we have to make an assumption about the probability distribution of the residuals $e_{t}$.
+    + With additive errors, residuals are usually assumed $\epsilon_{t} \sim N(0,\sigma ^{2})$. 
+- Then we can write our model:
+<div class="fragment">
+$$
+\begin{align}
+\textrm{Measurement equation: } y_{t} & = l_{t-1} + \epsilon_{t} \\
+\textrm{State equation: } l_{t} & = l_{t-1} + \alpha \epsilon_{t}
+\end{align}
+$$
+</div>
+
+# A taxonomy of ETS models
+![Figure: Measurement and state equations for various ETS models](ets taxonomy.png)
+
