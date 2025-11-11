@@ -549,10 +549,15 @@ y_{t} = y_{t-1} + \epsilon_{t}
 <div class="cell-output-display">
 <p><img data-src="16-regression-II_files/figure-revealjs/unnamed-chunk-12-1.png" width="960"></p>
 </div>
+</div>
+</section>
+<section id="example-acf-plots-1" class="slide level2">
+<h2>Example: ACF plots</h2>
+<div class="cell fragment">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>google_2015 <span class="sc">|&gt;</span> <span class="fu">ACF</span>(<span class="fu">difference</span>(Close)) <span class="sc">|&gt;</span></span>
 <span id="cb6-2"><a href="#cb6-2"></a>  <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">"Google closing stock price first difference"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="16-regression-II_files/figure-revealjs/unnamed-chunk-12-2.png" width="960"></p>
+<p><img data-src="16-regression-II_files/figure-revealjs/unnamed-chunk-14-1.png" width="960"></p>
 </div>
 </div>
 </section>

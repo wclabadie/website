@@ -136,6 +136,13 @@ google_2015 |>
 #| classes: fragment
 google_2015 |> ACF(Close) |>
   autoplot() + labs(subtitle = "Google closing stock price")
+```
+
+## Example: ACF plots
+```{r}
+#| echo: true
+#| output: true
+#| classes: fragment
 google_2015 |> ACF(difference(Close)) |>
   autoplot() + labs(subtitle = "Google closing stock price first difference")
 ```
