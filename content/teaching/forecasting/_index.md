@@ -55,3 +55,7 @@ Welcome to the course!
 {{% staticref "teaching/forecasting/12 exponential smoothing/15 exponential smoothing II.html" "newtab" %}}Lecture 15: exponential smoothing II{{% /staticref %}}
 
 {{% staticref "teaching/forecasting/12 exponential smoothing/11 exponential smoothing II.pdf" "newtab" %}}Lecture 15 exercise{{% /staticref %}}
+
+{{% staticref "teaching/forecasting/13 arima/16 regression II.html" "newtab" %}}Lecture 16: Regression evaluation and intro to ARIMA models{{% /staticref %}}
+
+{{% staticref "teaching/forecasting/13 arima/12 regression II.pdf" "newtab" %}}Lecture 16 exercises{{% /staticref %}}

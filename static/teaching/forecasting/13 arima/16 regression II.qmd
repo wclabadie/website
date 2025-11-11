@@ -1,0 +1,176 @@
+---
+title: "Time Series Regression: The Return"
+author: "BUS 323 Forecasting and Risk Analysis"
+format: 
+  revealjs:
+    theme: simple
+    incremental: true
+    html-math-method: mathjax
+editor: visual
+---
+
+## Selecting predictors
+
+-   Often many potential predictors
+-   For causal inference: theory
+-   For improved fit: a measure of accuracy
+    -   We'll look at a few.
+
+## Adjusted $R^{2}$
+
+-   Additional regressors always increase $R^{2}$.
+    -   Use adjusted $R^{2}$ instead.
+
+        ::: fragment
+        $$
+        \bar{R}^{2} = 1 - (1 - R^{2}) \frac{T - 1}{T - k - 1}
+        $$
+        :::
+
+    -   $T$: \# of observations
+
+    -   $k$: \# of predictors
+-   Maximizing $\bar{R}^{2}$ minimizes standard error.
+
+## Cross-validation
+
+-   Leave-one-out cross-validation
+    -   Remove observation $t$
+    -   Estimate the model based on remaining data
+    -   Compute the error for $e_{t}^{*}$
+    -   Repeat for $t=1,...,T$
+    -   Compute MSE from $e_{1}^{*},...,e_{T}^{*}$.
+
+## Akaike's Information Criterion
+
+::: fragment
+$$
+AIC = T \times log(\frac{SSE}{T}) + 2(k+2)
+$$
+:::
+    - $k+2$: number of parameters to be estimated
+
+## Corrected Akaike's Information Criterion
+
+- For small $T$, AIC results in too many predictors.
+- Instead, use corrected AIC:
+<div class="fragment">
+$$
+AIC_{c} = AIC = \frac{2(k+2)(k+3)}{T-k-3}
+$$
+</div>
+
+## Implementation
+- Recall: Regression forecast for US consumption:
+```{r}
+#| echo: true
+#| output: false
+#| classes: fragment
+library(fpp3)
+fit_consMR <- us_change |>
+  model(tslm = TSLM(Consumption ~ Income + Production +
+                                    Unemployment + Savings))
+report(fit_consMR)
+```
+
+## Implementation
+- Use ```glance()``` to obtain measures discussed earlier:
+```{r}
+glance(fit_consMR) |>
+  select(adj_r_squared, CV, AIC, AICc)
+```
+
+## First differencing
+- First difference:
+<div class="fragment">
+$$
+y_{t}' = y_{t} - y_{t-1}
+$$
+</div>
+
+## Random walk model
+- White noise first difference: $y_{t}' = \epsilon_{t}$
+- $y_{t}$ modeled as a **random walk**:
+<div class="fragment">
+$$
+y_{t} = y_{t-1} + \epsilon_{t}
+$$
+</div>
+
+## Example 
+- Random walk models used for non-stationary data.
+- e.g. Financial data:
+```{r}
+#| echo: true
+#| output: true
+#| classes: fragment
+google_2015 <- gafa_stock |>
+  filter(Symbol == "GOOG", year(Date) == 2015)
+```
+
+## Example: plot
+```{r}
+#| echo: false
+#| output: true
+#| classes: fragment
+google_2015 |>
+  autoplot(Close) +
+  labs(y = "Google closing stock price ($USD)")
+```
+
+## Example: first difference plot
+```{r}
+#| echo: false
+#| output: true
+#| classes: fragment
+google_2015 |>
+  autoplot(difference(Close)) +
+  labs(y = "Change in Google closing stock price ($USD)")
+```
+
+## Example: ACF plots
+- Check ACF for Google stock price and its first difference:
+```{r}
+#| echo: true
+#| output: true
+#| classes: fragment
+google_2015 |> ACF(Close) |>
+  autoplot() + labs(subtitle = "Google closing stock price")
+google_2015 |> ACF(difference(Close)) |>
+  autoplot() + labs(subtitle = "Google closing stock price first difference")
+```
+
+## Random walk models
+- Typical features:
+    - Long periods of apparent trends
+    - Sudden changes in trend direction
+- Random walk model similar to naive model
+- Non-zero mean: $y_{t} = c + y_{t-1} + \epsilon_{t}$ where $c$ is the average of the changes between consecutive observations.
+    - Drift method!
+
+## Second differencing
+<div class="fragment">
+$$
+\begin{align}
+y_{t}'' & = y_{t}' - y_{t-1}' \\
+& = (y_{t} - y_{t-1}) - (y_{t-1} - y_{t-2}) \\
+& = y_{t} - 2y_{t-1} + y_{t-2}
+\end{align}
+$$
+</div>
+- "changes in changes"
+
+## Seasonal differencing
+<div class="fragment">
+$$
+y_{t}' = y_{t} - y_{t-m}
+$$
+</div>
+- "lag-$m$ differences"
+- Yields seasonal naive forecasts.
+
+## Implementation
+- To take differences easily, use ```difference()```
+- To specify $m$-step differences, use ```difference(object, m)```
+
+
