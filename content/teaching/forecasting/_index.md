@@ -59,3 +59,5 @@ Welcome to the course!
 {{% staticref "teaching/forecasting/13 arima/16 regression II.html" "newtab" %}}Lecture 16: Regression evaluation and intro to ARIMA models{{% /staticref %}}
 
 {{% staticref "teaching/forecasting/13 arima/12 regression II.pdf" "newtab" %}}Lecture 16 exercises{{% /staticref %}}
+
+{{% staticref "teaching/forecasting/13 arima/17 arima I.html" "newtab" %}}Lecture 17: Autoregressive models{{% /staticref %}}
