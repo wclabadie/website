@@ -61,3 +61,7 @@ Welcome to the course!
 {{% staticref "teaching/forecasting/13 arima/12 regression II.pdf" "newtab" %}}Lecture 16 exercises{{% /staticref %}}
 
 {{% staticref "teaching/forecasting/13 arima/17 arima I.html" "newtab" %}}Lecture 17: Autoregressive models{{% /staticref %}}
+
+{{% staticref "teaching/forecasting/13 arima/18 arima II.html" "newtab" %}}Lecture 18: Moving average and ARIMA models{{% /staticref %}}
+
+{{% staticref "teaching/forecasting/13 arima/13 arima.pdf" "newtab" %}}Lecture 18 exercise{{% /staticref %}}
