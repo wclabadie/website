@@ -66,4 +66,6 @@ Welcome to the course!
 
 {{% staticref "teaching/forecasting/13 arima/13 arima.pdf" "newtab" %}}Lecture 18 exercise{{% /staticref %}}
 
-{{% staticref "teaching/forecasting/13 arima/19 arima III.html" "newtab" %}}Lecture 18: Moving average and ARIMA models{{% /staticref %}}
+{{% staticref "teaching/forecasting/13 arima/19 arima III.html" "newtab" %}}Lecture 19: ARIMA models: selection{{% /staticref %}}
+
+{{% staticref "teaching/forecasting/Report-2.pdf" "newtab" %}}Report 3{{% /staticref %}}
